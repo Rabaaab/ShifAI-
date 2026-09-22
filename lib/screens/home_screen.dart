@@ -1,21 +1,9 @@
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/lab_record.dart';
 import '../providers/lab_records_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/homa_ir_badge.dart';
-import 'lab_entry_form_screen.dart';
-import 'lab_history_screen.dart';
-import 'lab_scan_screen.dart';
-
-/// Camera-based OCR relies on Google ML Kit, which only ships Android/iOS
-/// implementations. On other platforms we hide the scan option and go
-/// straight to manual entry instead of letting it crash at runtime.
-bool get _scanSupported {
-  if (kIsWeb) return false;
-  return Platform.isAndroid || Platform.isIOS;
-}
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,10 +12,12 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<LabRecordsProvider>();
     final latest = provider.latest;
+    final hasResult = latest != null && latest.homaIr != null;
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: const [
             Text('Shif', style: TextStyle(color: AppColors.navy, fontWeight: FontWeight.bold)),
             Text('AI', style: TextStyle(color: AppColors.accentBlue, fontWeight: FontWeight.bold)),
@@ -35,151 +25,144 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: provider.loading
-                    ? const Center(child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: CircularProgressIndicator(),
-                      ))
-                    : latest == null || latest.homaIr == null
-                        ? _noDataYet(context)
-                        : _latestResult(context, latest.homaIr!, latest.homaIrBand!,
-                            latest.date),
+        child: provider.loading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 100),
+                child: hasResult
+                    ? _statusView(latest)
+                    : _welcomeView(context),
               ),
-            ),
-            const SizedBox(height: 20),
-            _ActionCard(
-              icon: _scanSupported ? Icons.document_scanner_outlined : Icons.edit_note,
-              title: _scanSupported ? 'Scan a lab report' : 'Add a lab result',
-              subtitle: _scanSupported
-                  ? 'Photograph a printed report — glucose, insulin, HbA1c'
-                  : 'Enter glucose, insulin or HbA1c manually',
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => _scanSupported
-                    ? const LabScanScreen()
-                    : const LabEntryFormScreen(),
-              )),
-            ),
-            const SizedBox(height: 12),
-            _ActionCard(
-              icon: Icons.show_chart,
-              title: 'View trend',
-              subtitle: 'HOMA-IR history over time',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const LabHistoryScreen()),
-              ),
-            ),
-            if (_scanSupported) ...[
-              const SizedBox(height: 12),
-              _ActionCard(
-                icon: Icons.edit_note,
-                title: 'Enter values manually',
-                subtitle: 'No photo needed',
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const LabEntryFormScreen()),
-                ),
-              ),
-            ],
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.pastel.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                'ShifAI is a risk-awareness and early-screening tool, not a '
-                'diagnosis. Always confirm results with your doctor.',
-                style: TextStyle(color: AppColors.navy, fontSize: 12),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  Widget _noDataYet(BuildContext context) {
-    return const Column(
-      children: [
-        Icon(Icons.science_outlined, size: 40, color: AppColors.accentBlue),
-        SizedBox(height: 10),
-        Text('No results yet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: 6),
-        Text(
-          'Add your fasting glucose and insulin to see your HOMA-IR score.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: AppColors.gray),
-        ),
-      ],
+  /// First-run state — one warm message, one clear next step. No menu of
+  /// competing options, matching the "Welcome to Wanis / Start Setup" pattern.
+  Widget _welcomeView(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: const BoxDecoration(
+              color: AppColors.pastel,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.favorite_border, color: AppColors.gold, size: 32),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Welcome to ShifAI',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.navy),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'A quiet companion for your metabolic health —\ncatching risk early, long before it becomes a diagnosis.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.gray, height: 1.4),
+          ),
+          const SizedBox(height: 28),
+          const Text(
+            'Tap + to add your first result, from a photo\nof a lab report or by typing it in.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.gray, fontSize: 13),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _latestResult(
-      BuildContext context, double homaIr, dynamic band, DateTime date) {
+  /// Returning state — the number, a plain-language status line in a
+  /// contextual banner (green/amber/red), nothing else competing for attention.
+  Widget _statusView(LabRecord latest) {
+    final band = latest.homaIrBand!;
+    final banner = _bannerFor(band);
+
     return Column(
       children: [
-        const Text('Latest HOMA-IR', style: TextStyle(color: AppColors.gray)),
-        const SizedBox(height: 12),
-        HomaIrBadge(homaIr: homaIr, band: band, size: 110),
-      ],
-    );
-  }
-}
-
-class _ActionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _ActionCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
+        const SizedBox(height: 8),
+        const Text('Your latest HOMA-IR', style: TextStyle(color: AppColors.gray)),
+        const SizedBox(height: 16),
+        HomaIrBadge(homaIr: latest.homaIr!, band: band, size: 120),
+        const SizedBox(height: 28),
+        Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: banner.bg,
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.pastel,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: AppColors.navy),
-              ),
-              const SizedBox(width: 14),
+              Icon(banner.icon, color: banner.fg, size: 20),
+              const SizedBox(width: 10),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                    const SizedBox(height: 2),
-                    Text(subtitle, style: const TextStyle(color: AppColors.gray, fontSize: 12)),
-                  ],
+                child: Text(
+                  banner.message,
+                  style: TextStyle(color: banner.fg, fontSize: 13.5, height: 1.4),
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.gray),
             ],
           ),
         ),
-      ),
+        const SizedBox(height: 20),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.creamCard,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.pastelBorder),
+          ),
+          child: const Text(
+            'ShifAI is a risk-awareness tool, not a diagnosis. Always confirm '
+            'results with your doctor.',
+            style: TextStyle(color: AppColors.gray, fontSize: 12),
+          ),
+        ),
+      ],
     );
   }
+
+  _Banner _bannerFor(HomaIrBand band) {
+    switch (band) {
+      case HomaIrBand.optimal:
+      case HomaIrBand.normal:
+        return _Banner(
+          bg: AppColors.safeBg,
+          fg: AppColors.safeText,
+          icon: Icons.check_circle_outline,
+          message: "You're in a healthy range. Keep up your current habits — "
+              'add a new result any time to keep tracking your trend.',
+        );
+      case HomaIrBand.earlyResistance:
+        return _Banner(
+          bg: AppColors.warningBg,
+          fg: AppColors.warningText,
+          icon: Icons.info_outline,
+          message: 'This suggests early insulin resistance. A short walk after '
+              'meals and cutting back on refined carbs can help — and it\'s '
+              'worth mentioning to your doctor.',
+        );
+      case HomaIrBand.significantResistance:
+        return _Banner(
+          bg: AppColors.dangerBg,
+          fg: AppColors.dangerText,
+          icon: Icons.warning_amber_outlined,
+          message: 'This is in a range worth discussing with your doctor soon. '
+              "ShifAI can't diagnose you, but this pattern is one they should know about.",
+        );
+    }
+  }
+}
+
+class _Banner {
+  final Color bg;
+  final Color fg;
+  final IconData icon;
+  final String message;
+  _Banner({required this.bg, required this.fg, required this.icon, required this.message});
 }

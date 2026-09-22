@@ -117,7 +117,7 @@ class _TrendChart extends StatelessWidget {
             color: AppColors.navy,
             barWidth: 3,
             dotData: FlDotData(
-              getDotPainter: (spot, _, __, ___) =>
+              getDotPainter: (spot, _, _, _) =>
                   FlDotCirclePainter(radius: 4, color: AppColors.accentBlue, strokeWidth: 0),
             ),
             belowBarData: BarAreaData(show: true, color: AppColors.pastel.withValues(alpha: 0.5)),

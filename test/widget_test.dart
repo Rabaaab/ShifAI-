@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifai/main.dart';
 
@@ -9,6 +8,6 @@ void main() {
 
     expect(find.text('Shif'), findsOneWidget);
     expect(find.text('AI'), findsOneWidget);
-    expect(find.text('No results yet'), findsOneWidget);
+    expect(find.text('Welcome to ShifAI'), findsOneWidget);
   });
 }
