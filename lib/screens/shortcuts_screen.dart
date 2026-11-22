@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../providers/lab_records_provider.dart';
 import '../providers/nav_provider.dart';
 import '../theme/ds.dart';
@@ -36,34 +37,34 @@ class ShortcutsScreen extends StatelessWidget {
     final items = <(IconData, String, String, VoidCallback, Color)>[
       (
         Icons.document_scanner_outlined,
-        'Scan a report',
-        'Read a lab report from a photo',
+        'Scan a report'.tr,
+        'Read a lab report from a photo'.tr,
         () => openAddResult(context),
         DS.navy,
       ),
       (
         Icons.edit_outlined,
-        'Type in a result',
-        'Enter the values yourself',
+        'Type in a result'.tr,
+        'Enter the values yourself'.tr,
         () => _go(context, const LabEntryFormScreen()),
         DS.navy,
       ),
       (
         Icons.show_chart_rounded,
-        'Trends',
-        'Your results over time',
+        'Trends'.tr,
+        'Your results over time'.tr,
         () => _tab(context, 1),
         DS.navy,
       ),
       (
         Icons.share_outlined,
-        'Share',
-        'Send a summary on WhatsApp',
+        'Share'.tr,
+        'Send a summary on WhatsApp'.tr,
         () {
           if (labs.records.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Add a result first, then you can share it.'),
+              SnackBar(
+                content: Text('Add a result first, then you can share it.'.tr),
               ),
             );
           } else {
@@ -74,57 +75,57 @@ class ShortcutsScreen extends StatelessWidget {
       ),
       (
         Icons.restaurant_outlined,
-        'Eat and move',
-        'Food and activity guidance',
+        'Eat and move'.tr,
+        'Food and activity guidance'.tr,
         () => _go(context, const WellnessScreen()),
         DS.navy,
       ),
       (
         Icons.accessibility_new_rounded,
-        'Skin and body check',
-        'Signs of insulin resistance',
+        'Skin and body check'.tr,
+        'Signs of insulin resistance'.tr,
         () => _go(context, const SkinCheckScreen()),
         DS.navy,
       ),
       (
         Icons.medical_services_outlined,
-        'Find a doctor',
-        'Book an appointment',
+        'Find a doctor'.tr,
+        'Book an appointment'.tr,
         () => _go(context, const FindDoctorScreen()),
         DS.navy,
       ),
       (
         Icons.medication_outlined,
-        'Medicine',
-        'Your daily schedule',
+        'Medicine'.tr,
+        'Your daily schedule'.tr,
         () => _go(context, const MedicineScreen()),
         DS.navy,
       ),
       (
         Icons.straighten_rounded,
-        'My measurements',
-        'Age, height, weight, waist',
+        'My measurements'.tr,
+        'Age, height, weight, waist'.tr,
         () => _go(context, const ProfileFormScreen()),
         DS.navy,
       ),
       (
         Icons.search_rounded,
-        'Search',
-        'Find anything in the app',
+        'Search'.tr,
+        'Find anything in the app'.tr,
         () => _go(context, const SearchScreen()),
         DS.navy,
       ),
       (
         Icons.notifications_none_rounded,
-        'Notifications',
-        'Reminders and updates',
+        'Notifications'.tr,
+        'Reminders and updates'.tr,
         () => _go(context, const NotificationsScreen()),
         DS.navy,
       ),
       (
         Icons.emergency_outlined,
-        'Emergency',
-        'Call for help',
+        'Emergency'.tr,
+        'Call for help'.tr,
         () => _go(context, const EmergencyScreen()),
         DS.emergency,
       ),

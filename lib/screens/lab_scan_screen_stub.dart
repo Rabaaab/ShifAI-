@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_colors.dart';
 import 'lab_entry_form_screen.dart';
 
@@ -13,7 +14,7 @@ class LabScanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add lab result')),
+      appBar: AppBar(title: Text('Add lab result'.tr)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -26,9 +27,10 @@ class LabScanScreen extends StatelessWidget {
                 color: AppColors.accentBlue,
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Camera scanning is available on the Android/iOS app. '
-                'On the web, enter your values directly.',
+                        'On the web, enter your values directly.'
+                    .tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.gray),
               ),
@@ -37,7 +39,7 @@ class LabScanScreen extends StatelessWidget {
                 onPressed: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (_) => const LabEntryFormScreen()),
                 ),
-                child: const Text('Enter values manually'),
+                child: Text('Enter values manually'.tr),
               ),
             ],
           ),

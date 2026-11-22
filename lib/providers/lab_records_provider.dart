@@ -6,6 +6,7 @@ import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 import 'package:uuid/uuid.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lab_record.dart';
 import '../services/lab_cloud_service.dart';
 import '../services/lab_storage_service.dart';
@@ -97,7 +98,7 @@ class LabRecordsProvider extends ChangeNotifier {
   Future<int> importGuestRecordsToAccount() async {
     final userId = _accountId;
     if (userId == null) {
-      throw StateError('Sign in before importing local results.');
+      throw StateError('Sign in before importing local results.'.tr);
     }
     await _activeLoad;
     final guestRecords = await _storage.loadAll();
@@ -202,15 +203,19 @@ class LabRecordsProvider extends ChangeNotifier {
       if (_accountId == userId) _syncError = error.message;
     } on ClientException {
       if (_accountId == userId) {
-        _syncError = 'Offline. Changes are saved on this device and will sync when reconnected.';
+        _syncError = 'Offline. Changes are saved on this device and will sync when reconnected.'
+            .tr;
       }
     } on TimeoutException {
       if (_accountId == userId) {
-        _syncError = 'Cloud sync timed out. Changes are saved on this device and will retry.';
+        _syncError = 'Cloud sync timed out. Changes are saved on this device and will retry.'
+            .tr;
       }
     } on PostgrestException catch (error) {
       if (_accountId == userId) {
-        _syncError = 'Cloud sync failed: ${error.message}';
+        _syncError = 'Cloud sync failed: {message}'.trf({
+          'message': error.message,
+        });
       }
     } finally {
       if (_accountId == userId) {

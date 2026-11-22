@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/ds.dart';
 
 /// Bottom bar of the agreed design: Home, Trends, Scan, Profile.
@@ -39,28 +40,28 @@ class BottomNav extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _Item(
-                label: 'Home',
+                label: 'Home'.tr,
                 icon: Icons.home_outlined,
                 activeIcon: Icons.home_rounded,
                 selected: currentIndex == 0,
                 onTap: () => onTabSelected(0),
               ),
               _Item(
-                label: 'Trends',
+                label: 'Trends'.tr,
                 icon: Icons.show_chart_rounded,
                 activeIcon: Icons.show_chart_rounded,
                 selected: currentIndex == 1,
                 onTap: () => onTabSelected(1),
               ),
               _Item(
-                label: 'Scan',
+                label: 'Scan'.tr,
                 icon: Icons.document_scanner_outlined,
                 activeIcon: Icons.document_scanner_outlined,
                 selected: false,
                 onTap: onScan,
               ),
               _Item(
-                label: 'Profile',
+                label: 'Profile'.tr,
                 icon: Icons.person_outline_rounded,
                 activeIcon: Icons.person_rounded,
                 selected: currentIndex == 2,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../l10n/l10n.dart';
 import '../services/prescription_parser.dart';
 import '../theme/ds.dart';
 import '../widgets/ds_widgets.dart';
@@ -54,7 +55,7 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
       if (!mounted) return;
       setState(() {
         _busy = false;
-        _error = 'Could not read this image. Try again with better light.';
+        _error = 'Could not read this image. Try again with better light.'.tr;
       });
     }
   }
@@ -75,7 +76,8 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
                 const SizedBox(height: 14),
                 Text(
                   'Printed prescriptions work best. Handwriting is hard to '
-                  'read, so you always check the result before it is added.',
+                          'read, so you always check the result before it is added.'
+                      .tr,
                   style: DS.text(
                     size: 15.5,
                     weight: FontWeight.w500,
@@ -89,14 +91,14 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
                   const SizedBox(height: 12),
                 ],
                 DsPrimaryButton(
-                  label: 'Take a photo',
+                  label: 'Take a photo'.tr,
                   icon: Icons.photo_camera_outlined,
                   loading: _busy,
                   onPressed: () => _read(ImageSource.camera),
                 ),
                 const SizedBox(height: 10),
                 DsOutlineButton(
-                  label: 'Choose from the gallery',
+                  label: 'Choose from the gallery'.tr,
                   icon: Icons.photo_library_outlined,
                   onPressed: _busy ? null : () => _read(ImageSource.gallery),
                 ),

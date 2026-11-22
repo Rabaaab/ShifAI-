@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/doctor.dart';
 import '../models/lab_record.dart';
 import '../models/wellness_content.dart';
@@ -67,57 +68,57 @@ class _SearchScreenState extends State<SearchScreen> {
     final features = <(IconData, String, String, List<String>, VoidCallback)>[
       (
         Icons.document_scanner_outlined,
-        'Scan a lab report',
-        'Feature',
+        'Scan a lab report'.tr,
+        'Feature'.tr,
         ['scan', 'lab', 'report', 'analyse', 'photo', 'ocr'],
         () => openAddResult(context),
       ),
       (
         Icons.show_chart_rounded,
-        'Trends',
-        'Feature',
+        'Trends'.tr,
+        'Feature'.tr,
         ['trend', 'chart', 'history', 'homa', 'score', 'result'],
         () => _tab(1),
       ),
       (
         Icons.restaurant_outlined,
-        'Eat and move',
-        'Feature',
+        'Eat and move'.tr,
+        'Feature'.tr,
         ['eat', 'food', 'diet', 'sport', 'walk', 'exercise', 'move', 'sugar'],
         () => _go(const WellnessScreen()),
       ),
       (
         Icons.accessibility_new_rounded,
-        'Skin and body check',
-        'Feature',
+        'Skin and body check'.tr,
+        'Feature'.tr,
         ['skin', 'neck', 'dark', 'patch', 'signs', 'acanthosis', 'risk'],
         () => _go(const SkinCheckScreen()),
       ),
       (
         Icons.medical_services_outlined,
-        'Find a doctor',
-        'Feature',
+        'Find a doctor'.tr,
+        'Feature'.tr,
         ['doctor', 'appointment', 'book', 'endocrinologist'],
         () => _go(const FindDoctorScreen()),
       ),
       (
         Icons.medication_outlined,
-        'Medicine',
-        'Feature',
+        'Medicine'.tr,
+        'Feature'.tr,
         ['medicine', 'pill', 'prescription', 'reminder'],
         () => _go(const MedicineScreen()),
       ),
       (
         Icons.straighten_rounded,
-        'My measurements',
-        'Feature',
+        'My measurements'.tr,
+        'Feature'.tr,
         ['measurement', 'height', 'weight', 'waist', 'age', 'profile'],
         () => _go(const ProfileFormScreen()),
       ),
       (
         Icons.emergency_outlined,
-        'Emergency',
-        'Feature',
+        'Emergency'.tr,
+        'Feature'.tr,
         ['emergency', 'ambulance', 'help', 'urgent'],
         () => _go(const EmergencyScreen()),
       ),
@@ -141,7 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
           _Hit(
             Icons.assignment_outlined,
             r.homaIr == null
-                ? 'Result of $date'
+                ? 'Result of {date}'.trf({'date': date})
                 : 'HOMA-IR ${r.homaIr!.toStringAsFixed(2)}',
             [date, band].where((s) => s.isNotEmpty).join(', '),
             () => _tab(1),
@@ -155,7 +156,7 @@ class _SearchScreenState extends State<SearchScreen> {
         hits.add(
           _Hit(
             Icons.medication_outlined,
-            m.name,
+            m.name.tr,
             '${m.dose}, ${m.time}',
             () => _go(const MedicineScreen()),
           ),
@@ -164,12 +165,19 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     for (final d in sampleDoctors) {
-      if (_match(q, [d.name, d.specialty, d.city])) {
+      if (_match(q, [
+        d.name,
+        d.specialty,
+        d.city,
+        d.address,
+        d.workTime,
+        d.phone,
+      ])) {
         hits.add(
           _Hit(
             Icons.person_outline_rounded,
             d.name,
-            '${d.specialty}, ${d.city}',
+            '${d.specialty.tr}, ${d.city}',
             () => _go(const FindDoctorScreen()),
           ),
         );
@@ -177,11 +185,11 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     for (final f in foodItems) {
-      if (_match(q, [f.name, f.examples])) {
+      if (_match(q, [f.name, f.examples, f.name.tr, f.examples.tr])) {
         hits.add(
           _Hit(
             Icons.restaurant_outlined,
-            f.name,
+            f.name.tr,
             f.level.label,
             () => _go(const WellnessScreen()),
           ),
@@ -230,7 +238,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 style: DS.text(weight: FontWeight.w600),
                                 onChanged: (v) => setState(() => _query = v),
                                 decoration: InputDecoration(
-                                  hintText: 'Search',
+                                  hintText: 'Search'.tr,
                                   hintStyle: DS.text(color: DS.iconMuted),
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
@@ -264,7 +272,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     ? Padding(
                         padding: const EdgeInsets.all(24),
                         child: Text(
-                          'Try: scan, food, walk, doctor, medicine, or a date.',
+                          'Try: scan, food, walk, doctor, medicine, or a date.'
+                              .tr,
                           style: DS.text(
                             size: 15,
                             weight: FontWeight.w500,
@@ -277,7 +286,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ? Padding(
                         padding: const EdgeInsets.all(24),
                         child: Text(
-                          'No match for "${_query.trim()}".',
+                          'No match for "{v}".'.trf({'v': _query.trim()}),
                           style: DS.text(color: DS.muted),
                         ),
                       )

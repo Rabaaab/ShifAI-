@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
+import '../l10n/l10n.dart';
 import '../providers/auth_provider.dart';
 import '../theme/ds.dart';
 import '../widgets/ds_widgets.dart';
@@ -61,10 +62,10 @@ class _AuthScreenState extends State<AuthScreen> {
     });
   }
 
-  static const _offline =
-      'Could not reach Supabase. Check your connection and try again.';
-  static const _timedOut =
-      'The request timed out. Check your connection and try again.';
+  static String get _offline =>
+      'Could not reach Supabase. Check your connection and try again.'.tr;
+  static String get _timedOut =>
+      'The request timed out. Check your connection and try again.'.tr;
 
   Future<void> _submit() async {
     if (_mode == _AuthMode.verifyEmail) {
@@ -91,7 +92,8 @@ class _AuthScreenState extends State<AuthScreen> {
         case _AuthMode.createAccount:
           if (!_acceptedTerms) {
             setState(
-              () => _message = 'Review and accept the privacy and health-use notices to continue.',
+              () => _message = 'Review and accept the privacy and health-use notices to continue.'
+                  .tr,
             );
             return;
           }
@@ -103,7 +105,8 @@ class _AuthScreenState extends State<AuthScreen> {
           if (response.session == null && mounted) {
             _changeMode(
               _AuthMode.verifyEmail,
-              message: 'Check your email for the Supabase verification link before signing in.',
+              message: 'Check your email for the Supabase verification link before signing in.'
+                  .tr,
             );
           } else if (mounted) {
             Navigator.of(context).popUntil((r) => r.isFirst);
@@ -113,7 +116,8 @@ class _AuthScreenState extends State<AuthScreen> {
           await auth.sendPasswordReset(_emailController.text);
           if (mounted) {
             setState(
-              () => _message = 'If an account exists for this address, a password reset link has been sent.',
+              () => _message = 'If an account exists for this address, a password reset link has been sent.'
+                  .tr,
             );
           }
           break;
@@ -131,14 +135,15 @@ class _AuthScreenState extends State<AuthScreen> {
               error.message.toLowerCase().contains('email not confirmed'))) {
         _changeMode(
           _AuthMode.verifyEmail,
-          message: 'Verify your email before signing in. You can request a new verification link below.',
+          message: 'Verify your email before signing in. You can request a new verification link below.'
+              .tr,
         );
       } else if (_mode == _AuthMode.signIn &&
           (error.code == 'invalid_credentials' ||
               error.message.toLowerCase().contains(
                 'invalid login credentials',
               ))) {
-        setState(() => _message = 'The email or password is incorrect.');
+        setState(() => _message = 'The email or password is incorrect.'.tr);
       } else {
         setState(() => _message = error.message);
       }
@@ -160,7 +165,7 @@ class _AuthScreenState extends State<AuthScreen> {
       await auth.resendVerification(_emailController.text);
       if (mounted) {
         setState(
-          () => _message = 'A new verification email has been requested.',
+          () => _message = 'A new verification email has been requested.'.tr,
         );
       }
     } on AuthRetryableFetchException {
@@ -177,13 +182,13 @@ class _AuthScreenState extends State<AuthScreen> {
   String? _validateEmail(String? value) {
     final email = value?.trim() ?? '';
     if (email.isEmpty || !email.contains('@') || !email.contains('.')) {
-      return 'Enter a valid email address.';
+      return 'Enter a valid email address.'.tr;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
-    if ((value ?? '').length < 8) return 'Use at least 8 characters.';
+    if ((value ?? '').length < 8) return 'Use at least 8 characters.'.tr;
     return null;
   }
 
@@ -245,7 +250,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         if (isVerify) ...[
                           const SizedBox(height: 12),
                           Text(
-                            'Follow the link sent to ${_emailController.text}.',
+                            'Follow the link sent to {text}.'.trf({
+                              'text': _emailController.text,
+                            }),
                             style: DS.text(color: DS.muted, height: 1.5),
                           ),
                         ],
@@ -260,12 +267,12 @@ class _AuthScreenState extends State<AuthScreen> {
                                     key: const Key('auth-name'),
                                     controller: _nameController,
                                     icon: Icons.person_outline_rounded,
-                                    label: 'First name',
+                                    label: 'First name'.tr,
                                     textCapitalization:
                                         TextCapitalization.words,
                                     validator: (value) =>
                                         (value?.trim().isEmpty ?? true)
-                                        ? 'Enter your name.'
+                                        ? 'Enter your name.'.tr
                                         : null,
                                   ),
                                   const SizedBox(height: 14),
@@ -274,7 +281,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   key: const Key('auth-email'),
                                   controller: _emailController,
                                   icon: Icons.mail_outline_rounded,
-                                  label: 'Email',
+                                  label: 'Email'.tr,
                                   keyboardType: TextInputType.emailAddress,
                                   autofillHints: const [AutofillHints.email],
                                   validator: _validateEmail,
@@ -285,7 +292,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                     key: const Key('auth-password'),
                                     controller: _passwordController,
                                     icon: Icons.lock_outline_rounded,
-                                    label: 'Password',
+                                    label: 'Password'.tr,
                                     obscure: !_passwordVisible,
                                     autofillHints: isCreate
                                         ? const [AutofillHints.newPassword]
@@ -295,8 +302,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                         : null,
                                     trailing: IconButton(
                                       tooltip: _passwordVisible
-                                          ? 'Hide password'
-                                          : 'Show password',
+                                          ? 'Hide password'.tr
+                                          : 'Show password'.tr,
                                       onPressed: () => setState(
                                         () => _passwordVisible =
                                             !_passwordVisible,
@@ -317,7 +324,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 4),
                                       child: Text(
-                                        'Use at least 8 characters.',
+                                        'Use at least 8 characters.'.tr,
                                         style: DS.text(
                                           size: 14,
                                           color: DS.muted,
@@ -336,7 +343,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: DsTextAction(
-                                      'Forgot password?',
+                                      'Forgot password?'.tr,
                                       alignment: Alignment.centerRight,
                                       onPressed: () =>
                                           _changeMode(_AuthMode.forgotPassword),
@@ -372,12 +379,12 @@ class _AuthScreenState extends State<AuthScreen> {
                       children: [
                         DsPrimaryButton(
                           label: isVerify
-                              ? 'Resend verification email'
+                              ? 'Resend verification email'.tr
                               : isReset
-                              ? 'Send reset link'
+                              ? 'Send reset link'.tr
                               : isCreate
-                              ? 'Create account'
-                              : 'Sign in',
+                              ? 'Create account'.tr
+                              : 'Sign in'.tr,
                           loading: auth.busy,
                           onPressed: _submit,
                         ),
@@ -397,8 +404,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 children: [
                                   TextSpan(
                                     text: isCreate
-                                        ? 'Already a member? '
-                                        : 'New here? ',
+                                        ? 'Already a member? '.tr
+                                        : 'New here? '.tr,
                                     style: DS.text(
                                       size: 15.5,
                                       weight: FontWeight.w600,
@@ -407,8 +414,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                   ),
                                   TextSpan(
                                     text: isCreate
-                                        ? 'Sign in'
-                                        : 'Create account',
+                                        ? 'Sign in'.tr
+                                        : 'Create account'.tr,
                                     style: DS.text(
                                       size: 15.5,
                                       weight: FontWeight.w800,
@@ -447,7 +454,7 @@ class _TermsRow extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text('Close'.tr),
           ),
         ],
       ),
@@ -472,30 +479,32 @@ class _TermsRow extends StatelessWidget {
           child: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text('I accept the ', style: plain),
+              Text('I accept the '.tr, style: plain),
               GestureDetector(
                 onTap: () => _notice(
                   context,
-                  'Privacy notice',
+                  'Privacy notice'.tr,
                   'ShifAI stores your account profile and confirmed lab values '
-                      'in your configured Supabase project. Row-Level Security '
-                      'is required on every user table. OCR runs on-device; '
-                      'report images are not uploaded. Do not enter data until '
-                      'your project and policies have been reviewed.',
+                          'in your configured Supabase project. Row-Level Security '
+                          'is required on every user table. OCR runs on-device; '
+                          'report images are not uploaded. Do not enter data until '
+                          'your project and policies have been reviewed.'
+                      .tr,
                 ),
-                child: Text('privacy notice', style: link),
+                child: Text('privacy notice'.tr, style: link),
               ),
-              Text(' and ', style: plain),
+              Text(' and '.tr, style: plain),
               GestureDetector(
                 onTap: () => _notice(
                   context,
-                  'Terms of use',
+                  'Terms of use'.tr,
                   'ShifAI is a screening and awareness tool, not a diagnostic '
-                      'device or a substitute for professional medical advice. '
-                      'Confirm results and treatment decisions with a licensed '
-                      'clinician.',
+                          'device or a substitute for professional medical advice. '
+                          'Confirm results and treatment decisions with a licensed '
+                          'clinician.'
+                      .tr,
                 ),
-                child: Text('terms of use', style: link),
+                child: Text('terms of use'.tr, style: link),
               ),
               Text('.', style: plain),
             ],
@@ -531,7 +540,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
         _passwordController.text != _confirmController.text) {
       setState(
         () => _message =
-            'Use at least 8 characters and make sure both passwords match.',
+            'Use at least 8 characters and make sure both passwords match.'.tr,
       );
       return;
     }
@@ -569,14 +578,14 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
               DsTextField(
                 controller: _passwordController,
                 icon: Icons.lock_outline_rounded,
-                label: 'New password',
+                label: 'New password'.tr,
                 obscure: true,
               ),
               const SizedBox(height: 14),
               DsTextField(
                 controller: _confirmController,
                 icon: Icons.lock_reset_rounded,
-                label: 'Confirm password',
+                label: 'Confirm password'.tr,
                 obscure: true,
               ),
               if (_message != null) ...[
@@ -585,7 +594,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
               ],
               const SizedBox(height: 24),
               DsPrimaryButton(
-                label: 'Update password',
+                label: 'Update password'.tr,
                 loading: _busy,
                 onPressed: _save,
               ),

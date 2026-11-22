@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lab_record.dart';
 import '../providers/lab_records_provider.dart';
 import '../providers/profile_provider.dart';
@@ -23,11 +24,11 @@ extension TrendMetricX on TrendMetric {
       case TrendMetric.homaIr:
         return 'HOMA-IR';
       case TrendMetric.glucose:
-        return 'Glucose';
+        return 'Glucose'.tr;
       case TrendMetric.hba1c:
         return 'HbA1c';
       case TrendMetric.insulin:
-        return 'Insulin';
+        return 'Insulin'.tr;
     }
   }
 
@@ -36,11 +37,11 @@ extension TrendMetricX on TrendMetric {
       case TrendMetric.homaIr:
         return 'HOMA-IR';
       case TrendMetric.glucose:
-        return 'fasting glucose';
+        return 'fasting glucose'.tr;
       case TrendMetric.hba1c:
         return 'HbA1c';
       case TrendMetric.insulin:
-        return 'fasting insulin';
+        return 'fasting insulin'.tr;
     }
   }
 
@@ -90,22 +91,23 @@ class _TrendsScreenState extends State<TrendsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          'Delete this result?',
+          'Delete this result?'.tr,
           style: DS.text(weight: FontWeight.w800),
         ),
         content: Text(
           'It will be removed from your history and synced to your account '
-          'when online.',
+                  'when online.'
+              .tr,
           style: DS.text(size: 15, height: 1.45),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'.tr),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: DS.redText)),
+            child: Text('Delete'.tr, style: TextStyle(color: DS.redText)),
           ),
         ],
       ),
@@ -145,19 +147,19 @@ class _TrendsScreenState extends State<TrendsScreen> {
             const SizedBox(height: 12),
             if (record.fastingGlucoseMgdl != null)
               _detail(
-                'Fasting glucose',
+                'Fasting glucose'.tr,
                 '${record.fastingGlucoseMgdl!.toStringAsFixed(0)} mg/dL',
               ),
             if (record.fastingInsulinUiuml != null)
               _detail(
-                'Fasting insulin',
+                'Fasting insulin'.tr,
                 '${record.fastingInsulinUiuml!.toStringAsFixed(1)} µIU/mL',
               ),
             if (record.hba1cPercent != null)
               _detail('HbA1c', '${record.hba1cPercent!.toStringAsFixed(1)} %'),
             const SizedBox(height: 18),
             DsOutlineButton(
-              label: 'Delete this result',
+              label: 'Delete this result'.tr,
               color: DS.redText,
               iconColor: DS.redText,
               icon: Icons.delete_outline_rounded,
@@ -217,7 +219,7 @@ class _TrendsScreenState extends State<TrendsScreen> {
               _ChartCard(metric: _metric, series: series),
               const SizedBox(height: 24),
               Text(
-                'Results',
+                'Results'.tr,
                 style: DS.text(size: 17, weight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
@@ -230,7 +232,7 @@ class _TrendsScreenState extends State<TrendsScreen> {
                 children: [
                   Expanded(
                     child: DsPrimaryButton(
-                      label: 'Add result',
+                      label: 'Add result'.tr,
                       icon: Icons.add_rounded,
                       height: 58,
                       onPressed: () => openAddResult(context),
@@ -239,7 +241,7 @@ class _TrendsScreenState extends State<TrendsScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: DsOutlineButton(
-                      label: 'Share',
+                      label: 'Share'.tr,
                       icon: Icons.share_outlined,
                       onPressed: () =>
                           shareSummaryOnWhatsApp(context, all.last),
@@ -266,12 +268,12 @@ class _EmptyTrends extends StatelessWidget {
         const DsIconBadge(icon: Icons.show_chart_rounded, size: 56),
         const SizedBox(height: 16),
         Text(
-          'No results yet',
+          'No results yet'.tr,
           style: DS.text(size: 20, weight: FontWeight.w800),
         ),
         const SizedBox(height: 6),
         Text(
-          'Scan a lab report to see your score and your trend.',
+          'Scan a lab report to see your score and your trend.'.tr,
           textAlign: TextAlign.center,
           style: DS.text(
             size: 14.5,
@@ -282,7 +284,7 @@ class _EmptyTrends extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         DsPrimaryButton(
-          label: 'Scan a report',
+          label: 'Scan a report'.tr,
           icon: Icons.document_scanner_outlined,
           height: 56,
           onPressed: () => openAddResult(context),
@@ -335,7 +337,7 @@ class _NoHomaCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Estimate without insulin',
+                  'Estimate without insulin'.tr,
                   style: DS.text(
                     size: 15,
                     weight: FontWeight.w600,
@@ -358,9 +360,14 @@ class _NoHomaCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               reasons.isEmpty
-                  ? 'Chance that your HOMA-IR is 2.5 or higher.'
+                  ? 'Chance that your HOMA-IR is 2.5 or higher.'.tr
                   : 'Chance that your HOMA-IR is 2.5 or higher. Mainly because '
-                        'of: ${reasons.map((f) => f.label.toLowerCase()).join(', ')}.',
+                            'of: {v}.'
+                        .trf({
+                          'v': reasons
+                              .map((f) => f.label.toLowerCase())
+                              .join(', '),
+                        }),
               style: DS.text(
                 size: 14,
                 weight: FontWeight.w500,
@@ -378,10 +385,12 @@ class _NoHomaCard extends StatelessWidget {
       child: Text(
         hasLabs
             ? 'Add your age, sex, height, weight and waist in your profile to '
-                  'get an estimate from these blood values.'
+                      'get an estimate from these blood values.'
+                  .tr
             : 'Add both fasting glucose and insulin to see your HOMA-IR score. '
-                  'Without insulin, glucose, HbA1c, triglycerides and HDL '
-                  'together give an estimate.',
+                      'Without insulin, glucose, HbA1c, triglycerides and HDL '
+                      'together give an estimate.'
+                  .tr,
         style: DS.text(
           size: 15,
           weight: FontWeight.w500,
@@ -454,8 +463,12 @@ class _ScoreCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${change.abs().toStringAsFixed(2)} since '
-                        '${DateFormat.MMM().format(first.date)}',
+                        '{v} since '
+                                '{v2}'
+                            .trf({
+                              'v': change.abs().toStringAsFixed(2),
+                              'v2': DateFormat.MMM().format(first.date),
+                            }),
                         style: DS.text(
                           size: 14.5,
                           weight: FontWeight.w700,
@@ -659,7 +672,7 @@ class _ChartCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Over time',
+                'Over time'.tr,
                 style: DS.text(size: 18, weight: FontWeight.w700),
               ),
               if (pct != null && pct.abs() >= 0.5)
@@ -673,13 +686,13 @@ class _ChartCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            n == 1 ? '1 lab checkup' : '$n lab checkups',
+            n == 1 ? '1 lab checkup'.tr : '{n} lab checkups'.trf({'n': n}),
             style: DS.text(size: 14, weight: FontWeight.w500, color: DS.muted),
           ),
           const SizedBox(height: 14),
           if (n == 0)
             Text(
-              'No results with this value yet.',
+              'No results with this value yet.'.tr,
               style: DS.text(color: DS.muted),
             )
           else if (n < 2)
@@ -690,7 +703,8 @@ class _ChartCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
-                'Add one more result with this value to see your trend line.',
+                'Add one more result with this value to see your trend line.'
+                    .tr,
                 style: DS.text(size: 14.5, color: DS.muted, height: 1.4),
               ),
             )
@@ -713,7 +727,7 @@ class _ChartCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Healthy zone',
+                    'Healthy zone'.tr,
                     style: DS.text(
                       size: 13,
                       weight: FontWeight.w600,
@@ -883,7 +897,7 @@ class _ResultRow extends StatelessWidget {
     ];
     return Semantics(
       button: true,
-      label: 'Result of ${DateFormat.MMMd().format(record.date)}',
+      label: 'Result of {v}'.trf({'v': DateFormat.MMMd().format(record.date)}),
       child: GestureDetector(
         onTap: onTap,
         child: Container(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lab_record.dart';
 import '../providers/appointment_provider.dart';
 import '../providers/auth_provider.dart';
@@ -14,6 +15,7 @@ import '../utils/open_add_result.dart';
 import '../utils/share_summary.dart';
 import '../widgets/band_style.dart';
 import '../widgets/ds_widgets.dart';
+import '../widgets/language_picker.dart';
 import 'book_screen.dart';
 import 'emergency_screen.dart';
 import 'find_doctor_screen.dart';
@@ -39,9 +41,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   static String _greeting(DateTime now) {
-    if (now.hour < 12) return 'Morning';
-    if (now.hour < 18) return 'Afternoon';
-    return 'Evening';
+    if (now.hour < 12) return 'Morning'.tr;
+    if (now.hour < 18) return 'Afternoon'.tr;
+    return 'Evening'.tr;
   }
 
   void _push(BuildContext context, Widget screen) =>
@@ -70,29 +72,29 @@ class HomeScreen extends StatelessWidget {
     final unseen = unseenCount(context, notices);
 
     final title = firstVisit
-        ? (name.isEmpty ? 'Welcome' : 'Welcome, $name')
+        ? (name.isEmpty ? 'Welcome'.tr : 'Welcome, {name}'.trf({'name': name}))
         : (name.isEmpty ? _greeting(now) : '${_greeting(now)}, $name');
 
     final actions = following
         ? [
             DsQuickAction(
               icon: Icons.medical_services_outlined,
-              label: 'Doctor',
+              label: 'Doctor'.tr,
               onTap: () => _push(context, const FindDoctorScreen()),
             ),
             DsQuickAction(
               icon: Icons.medication_outlined,
-              label: 'Medicine',
+              label: 'Medicine'.tr,
               onTap: () => _push(context, const MedicineScreen()),
             ),
             DsQuickAction(
               icon: Icons.assignment_turned_in_outlined,
-              label: 'Report',
+              label: 'Report'.tr,
               onTap: () => nav.setTab(1),
             ),
             DsQuickAction(
               icon: Icons.emergency_outlined,
-              label: 'Emergency',
+              label: 'Emergency'.tr,
               iconColor: DS.emergency,
               onTap: () => _push(context, const EmergencyScreen()),
             ),
@@ -100,25 +102,28 @@ class HomeScreen extends StatelessWidget {
         : [
             DsQuickAction(
               icon: Icons.document_scanner_outlined,
-              label: 'Scan',
+              label: 'Scan'.tr,
               onTap: () => openAddResult(context),
             ),
             DsQuickAction(
               icon: Icons.edit_outlined,
-              label: 'Type in',
+              label: 'Type in'.tr,
               onTap: () => _push(context, const LabEntryFormScreen()),
             ),
             DsQuickAction(
               icon: Icons.show_chart_rounded,
-              label: 'Trends',
+              label: 'Trends'.tr,
               onTap: () => nav.setTab(1),
             ),
             DsQuickAction(
               icon: Icons.share_outlined,
-              label: 'Share',
+              label: 'Share'.tr,
               onTap: () {
                 if (labs.records.isEmpty) {
-                  _soon(context, 'Add a result first, then you can share it.');
+                  _soon(
+                    context,
+                    'Add a result first, then you can share it.'.tr,
+                  );
                 } else {
                   shareSummaryOnWhatsApp(context, labs.records.last);
                 }
@@ -136,7 +141,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: Image.asset(
                       'assets/images/shifai_logo.png',
                       width: 112,
@@ -147,11 +152,13 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
+                const LanguageButton(),
+                const SizedBox(width: 10),
                 Semantics(
                   button: true,
                   label: unseen == 0
-                      ? 'Notifications'
-                      : 'Notifications, $unseen new',
+                      ? 'Notifications'.tr
+                      : 'Notifications, {unseen} new'.trf({'unseen': unseen}),
                   child: GestureDetector(
                     onTap: () => _push(context, const NotificationsScreen()),
                     child: Stack(
@@ -228,8 +235,8 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   firstVisit
-                      ? "Let's look at your numbers"
-                      : 'Your health at a glance',
+                      ? "Let's look at your numbers".tr
+                      : 'Your health at a glance'.tr,
                   style: DS.text(
                     size: 14.5,
                     weight: FontWeight.w500,
@@ -241,7 +248,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 24),
             Semantics(
               button: true,
-              label: 'Search',
+              label: 'Search'.tr,
               child: GestureDetector(
                 onTap: () => _push(context, const SearchScreen()),
                 child: Container(
@@ -260,7 +267,7 @@ class HomeScreen extends StatelessWidget {
                         color: DS.iconMuted,
                       ),
                       const SizedBox(width: 12),
-                      Text('Search', style: DS.text(color: DS.iconMuted)),
+                      Text('Search'.tr, style: DS.text(color: DS.iconMuted)),
                     ],
                   ),
                 ),
@@ -268,8 +275,8 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             DsSectionHeader(
-              'Quick actions',
-              action: 'Show all',
+              'Quick actions'.tr,
+              action: 'Show all'.tr,
               onAction: () => _push(context, const ShortcutsScreen()),
             ),
             Row(
@@ -279,69 +286,69 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 24),
             if (following)
               _Banner(
-                title: 'Keep your results up to date',
-                button: 'Scan report',
+                title: 'Keep your results up to date'.tr,
+                button: 'Scan report'.tr,
                 onTap: () => openAddResult(context),
                 doctorPhoto: appt.appointment!.doctor.photo,
               )
             else
               _Banner(
                 title: firstVisit
-                    ? 'Scan your first lab report'
-                    : 'Scan your next lab report',
-                button: 'Scan now',
+                    ? 'Scan your first lab report'.tr
+                    : 'Scan your next lab report'.tr,
+                button: 'Scan now'.tr,
                 onTap: () => openAddResult(context),
               ),
             if (following) ...[
               const SizedBox(height: 24),
-              const DsSectionHeader('Upcoming appointment'),
+              DsSectionHeader('Upcoming appointment'.tr),
               _AppointmentCard(appointment: appt.appointment!),
             ],
             const SizedBox(height: 24),
-            const DsSectionHeader('For you'),
+            DsSectionHeader('For you'.tr),
             const SizedBox(height: 4),
             _FeatureCard(
               icon: Icons.restaurant_outlined,
-              title: 'Eat and move',
-              subtitle: 'Food and activity tips to lower your risk',
+              title: 'Eat and move'.tr,
+              subtitle: 'Food and activity tips to lower your risk'.tr,
               onTap: () => _push(context, const WellnessScreen()),
             ),
             if (labs.records.isEmpty) ...[
               const SizedBox(height: 10),
               _FeatureCard(
                 icon: Icons.accessibility_new_rounded,
-                title: 'No blood test yet?',
-                subtitle: 'Check your skin signs and risk factors',
+                title: 'No blood test yet?'.tr,
+                subtitle: 'Check your skin signs and risk factors'.tr,
                 onTap: () => _push(context, const SkinCheckScreen()),
               ),
             ],
             if (firstVisit) ...[
               const SizedBox(height: 24),
               Text(
-                'How it works',
+                'How it works'.tr,
                 style: DS.text(size: 17, weight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
-              const Row(
+              Row(
                 children: [
                   Expanded(
                     child: _Step(
                       icon: Icons.photo_camera_outlined,
-                      label: 'Scan',
+                      label: 'Scan'.tr,
                     ),
                   ),
                   SizedBox(width: 10),
                   Expanded(
                     child: _Step(
                       icon: Icons.check_box_outlined,
-                      label: 'Check',
+                      label: 'Check'.tr,
                     ),
                   ),
                   SizedBox(width: 10),
                   Expanded(
                     child: _Step(
                       icon: Icons.show_chart_rounded,
-                      label: 'Your score',
+                      label: 'Your score'.tr,
                     ),
                   ),
                 ],
@@ -350,8 +357,8 @@ class HomeScreen extends StatelessWidget {
             if (latest != null) ...[
               const SizedBox(height: 24),
               DsSectionHeader(
-                'Latest result',
-                action: 'Show all',
+                'Latest result'.tr,
+                action: 'Show all'.tr,
                 onAction: () => nav.setTab(1),
               ),
               _LatestResultCard(record: latest, onTap: () => nav.setTab(1)),
@@ -423,7 +430,7 @@ class _Banner extends StatelessWidget {
                     doctorPhoto!,
                     fit: BoxFit.cover,
                     alignment: const Alignment(0, -0.7),
-                    semanticLabel: 'Your doctor',
+                    semanticLabel: 'Your doctor'.tr,
                   ),
                 ),
               ),
@@ -649,22 +656,22 @@ class _AppointmentCard extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          'Cancel this appointment?',
+          'Cancel this appointment?'.tr,
           style: DS.text(weight: FontWeight.w800),
         ),
         content: Text(
-          'Your doctor will no longer see your results.',
+          'Your doctor will no longer see your results.'.tr,
           style: DS.text(size: 15, height: 1.45),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Keep it'),
+            child: Text('Keep it'.tr),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Cancel appointment',
+            child: Text(
+              'Cancel appointment'.tr,
               style: TextStyle(color: DS.redText),
             ),
           ),
@@ -711,7 +718,7 @@ class _AppointmentCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      doctor.specialty,
+                      doctor.specialty.tr,
                       style: DS.text(
                         size: 14,
                         weight: FontWeight.w500,
@@ -721,8 +728,8 @@ class _AppointmentCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const DsPill(
-                'Upcoming',
+              DsPill(
+                'Upcoming'.tr,
                 background: DS.greenTint,
                 foreground: DS.greenText,
                 size: 12.5,
@@ -738,7 +745,7 @@ class _AppointmentCard extends StatelessWidget {
                 DateFormat('d MMM, y').format(appointment.date),
               ),
               info(Icons.schedule_rounded, formatSlotTime(appointment.time)),
-              info(Icons.place_outlined, 'Clinic'),
+              info(Icons.place_outlined, 'Clinic'.tr),
             ],
           ),
           const SizedBox(height: 16),
@@ -746,7 +753,7 @@ class _AppointmentCard extends StatelessWidget {
             children: [
               Expanded(
                 child: DsOutlineButton(
-                  label: 'Cancel',
+                  label: 'Cancel'.tr,
                   height: 52,
                   onPressed: () => _cancel(context),
                 ),
@@ -754,7 +761,7 @@ class _AppointmentCard extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: DsOutlineButton(
-                  label: 'Reschedule',
+                  label: 'Reschedule'.tr,
                   height: 52,
                   color: DS.navy,
                   fill: DS.skyTint,

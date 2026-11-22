@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../providers/profile_provider.dart';
 import '../providers/skin_check_provider.dart';
 import '../services/ada_risk.dart';
@@ -67,7 +68,8 @@ class SkinCheckScreen extends StatelessWidget {
               const SizedBox(height: 14),
               Text(
                 'No blood test yet? Some signs can point to insulin '
-                'resistance. This is a self-check, not a diagnosis.',
+                        'resistance. This is a self-check, not a diagnosis.'
+                    .tr,
                 style: DS.text(
                   size: 15.5,
                   weight: FontWeight.w500,
@@ -76,27 +78,29 @@ class SkinCheckScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 22),
-              const _SectionTitle('1. Look for these signs'),
+              _SectionTitle('1. Look for these signs'.tr),
               _QuestionCard(
-                title: 'Dark, thick, velvety patches',
+                title: 'Dark, thick, velvety patches'.tr,
                 detail:
                     'On the neck, in the armpits or in the groin. They '
-                    'can look like dirt that does not wash off.',
+                            'can look like dirt that does not wash off.'
+                        .tr,
                 answer: skin.answer(SkinCheckProvider.patches),
                 onAnswer: (v) => skin.setAnswer(SkinCheckProvider.patches, v),
               ),
               const SizedBox(height: 10),
               _QuestionCard(
-                title: 'Small skin tags',
-                detail: 'Soft little growths on the neck, armpits or eyelids.',
+                title: 'Small skin tags'.tr,
+                detail:
+                    'Soft little growths on the neck, armpits or eyelids.'.tr,
                 answer: skin.answer(SkinCheckProvider.tags),
                 onAnswer: (v) => skin.setAnswer(SkinCheckProvider.tags, v),
               ),
               const SizedBox(height: 22),
-              const _SectionTitle('2. Photos to compare over time'),
+              _SectionTitle('2. Photos to compare over time'.tr),
               const _PhotoSection(),
               const SizedBox(height: 22),
-              const _SectionTitle('3. Your risk factors'),
+              _SectionTitle('3. Your risk factors'.tr),
               if (profile == null)
                 DsCard(
                   radius: 24,
@@ -106,7 +110,8 @@ class SkinCheckScreen extends StatelessWidget {
                     children: [
                       Text(
                         'Add your age, height and weight first. They are part '
-                        'of the score.',
+                                'of the score.'
+                            .tr,
                         style: DS.text(
                           size: 14.5,
                           weight: FontWeight.w500,
@@ -116,7 +121,7 @@ class SkinCheckScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 14),
                       DsPrimaryButton(
-                        label: 'Add my measurements',
+                        label: 'Add my measurements'.tr,
                         height: 52,
                         onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(
@@ -129,29 +134,29 @@ class SkinCheckScreen extends StatelessWidget {
                 )
               else ...[
                 _QuestionCard(
-                  title: 'A parent, brother or sister has diabetes',
+                  title: 'A parent, brother or sister has diabetes'.tr,
                   answer: skin.answer(SkinCheckProvider.family),
                   onAnswer: (v) => skin.setAnswer(SkinCheckProvider.family, v),
                 ),
                 const SizedBox(height: 10),
                 _QuestionCard(
-                  title: 'High blood pressure',
-                  detail: 'Told by a doctor, or on treatment for it.',
+                  title: 'High blood pressure'.tr,
+                  detail: 'Told by a doctor, or on treatment for it.'.tr,
                   answer: skin.answer(SkinCheckProvider.pressure),
                   onAnswer: (v) =>
                       skin.setAnswer(SkinCheckProvider.pressure, v),
                 ),
                 const SizedBox(height: 10),
                 _QuestionCard(
-                  title: 'Physically active most days',
-                  detail: 'About 30 minutes of brisk activity on most days.',
+                  title: 'Physically active most days'.tr,
+                  detail: 'About 30 minutes of brisk activity on most days.'.tr,
                   answer: skin.answer(SkinCheckProvider.active),
                   onAnswer: (v) => skin.setAnswer(SkinCheckProvider.active, v),
                 ),
                 if (profile.female) ...[
                   const SizedBox(height: 10),
                   _QuestionCard(
-                    title: 'Diabetes during a pregnancy',
+                    title: 'Diabetes during a pregnancy'.tr,
                     answer: skin.answer(SkinCheckProvider.gestational),
                     onAnswer: (v) =>
                         skin.setAnswer(SkinCheckProvider.gestational, v),
@@ -163,7 +168,8 @@ class SkinCheckScreen extends StatelessWidget {
               const SizedBox(height: 18),
               Text(
                 'This check does not diagnose anything. Only a blood test and '
-                'a doctor can.',
+                        'a doctor can.'
+                    .tr,
                 textAlign: TextAlign.center,
                 style: DS.text(
                   size: 13.5,
@@ -257,9 +263,9 @@ class _QuestionCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              choice('Yes', true),
+              choice('Yes'.tr, true),
               const SizedBox(width: 10),
-              choice('No', false),
+              choice('No'.tr, false),
             ],
           ),
         ],
@@ -294,8 +300,9 @@ class _PhotoSection extends StatelessWidget {
         children: [
           Text(
             'Take a photo of the same place every few weeks, in good light. '
-            'Photos stay on this phone. ShifAI does not analyse them; show '
-            'them to your doctor.',
+                    'Photos stay on this phone. ShifAI does not analyse them; show '
+                    'them to your doctor.'
+                .tr,
             style: DS.text(
               size: 14,
               weight: FontWeight.w500,
@@ -309,7 +316,7 @@ class _PhotoSection extends StatelessWidget {
               children: [
                 Expanded(
                   child: DsOutlineButton(
-                    label: 'Neck',
+                    label: 'Neck'.tr,
                     icon: Icons.photo_camera_outlined,
                     height: 52,
                     onPressed: () => _take(context, 'neck'),
@@ -318,7 +325,7 @@ class _PhotoSection extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: DsOutlineButton(
-                    label: 'Armpit',
+                    label: 'Armpit'.tr,
                     icon: Icons.photo_camera_outlined,
                     height: 52,
                     onPressed: () => _take(context, 'armpit'),
@@ -328,7 +335,7 @@ class _PhotoSection extends StatelessWidget {
             )
           else
             Text(
-              'Photos are available in the phone app.',
+              'Photos are available in the phone app.'.tr,
               style: DS.text(
                 size: 14,
                 weight: FontWeight.w600,
@@ -387,7 +394,7 @@ class _PhotoSection extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Press and hold a photo to delete it.',
+              'Press and hold a photo to delete it.'.tr,
               style: DS.text(size: 12.5, color: DS.muted),
             ),
           ],
@@ -409,7 +416,7 @@ class _ResultCard extends StatelessWidget {
         radius: 26,
         padding: const EdgeInsets.all(20),
         child: Text(
-          'Answer the questions above to see your result.',
+          'Answer the questions above to see your result.'.tr,
           style: DS.text(color: DS.muted, height: 1.45),
         ),
       );
@@ -434,7 +441,7 @@ class _ResultCard extends StatelessWidget {
             children: [
               if (score != null)
                 Text(
-                  'Risk score $score',
+                  'Risk score {score}'.trf({'score': score}),
                   style: DS.text(size: 22, weight: FontWeight.w800, color: fg),
                 ),
               if (score != null) const SizedBox(height: 6),
@@ -443,16 +450,20 @@ class _ResultCard extends StatelessWidget {
                     ? [
                         if (high)
                           'Your answers point to a higher chance of '
-                              'prediabetes or diabetes (5 points or more).',
+                                  'prediabetes or diabetes (5 points or more).'
+                              .tr,
                         if (skinSign)
                           'Dark patches and skin tags are common with insulin '
-                              'resistance, though they can have other causes.',
+                                  'resistance, though they can have other causes.'
+                              .tr,
                         'A blood test (fasting glucose with insulin, or '
-                            'HbA1c) is the way to check.',
+                                'HbA1c) is the way to check.'
+                            .tr,
                       ].join(' ')
                     : 'Your answers point to a lower chance for now. Keep '
-                          'moving and eating well, and test again if your '
-                          'situation changes.',
+                              'moving and eating well, and test again if your '
+                              'situation changes.'
+                          .tr,
                 style: DS.text(
                   size: 14.5,
                   weight: FontWeight.w600,
@@ -466,14 +477,14 @@ class _ResultCard extends StatelessWidget {
         const SizedBox(height: 14),
         if (needsTest) ...[
           DsPrimaryButton(
-            label: 'Scan a lab report',
+            label: 'Scan a lab report'.tr,
             icon: Icons.document_scanner_outlined,
             height: 56,
             onPressed: () => openAddResult(context),
           ),
           const SizedBox(height: 10),
           DsOutlineButton(
-            label: 'Find a doctor',
+            label: 'Find a doctor'.tr,
             icon: Icons.medical_services_outlined,
             onPressed: () => Navigator.of(
               context,
@@ -482,7 +493,7 @@ class _ResultCard extends StatelessWidget {
           const SizedBox(height: 10),
         ],
         DsOutlineButton(
-          label: 'Eat and move',
+          label: 'Eat and move'.tr,
           icon: Icons.directions_walk_rounded,
           onPressed: () => Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => const WellnessScreen())),

@@ -1,3 +1,5 @@
+import '../l10n/l10n.dart';
+
 enum GlucoseUnit { mgdl, mmoll, gl }
 
 enum InsulinUnit { uiuml, pmoll }
@@ -145,13 +147,13 @@ extension HomaIrBandLabel on HomaIrBand {
   String get label {
     switch (this) {
       case HomaIrBand.optimal:
-        return 'Optimal';
+        return 'Optimal'.tr;
       case HomaIrBand.normal:
-        return 'Normal';
+        return 'Normal'.tr;
       case HomaIrBand.earlyResistance:
-        return 'Borderline';
+        return 'Borderline'.tr;
       case HomaIrBand.significantResistance:
-        return 'Insulin resistance likely';
+        return 'Insulin resistance likely'.tr;
     }
   }
 }

@@ -3,13 +3,16 @@ import 'package:http/http.dart' show ClientException;
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
+import '../l10n/l10n.dart';
 import '../providers/auth_provider.dart';
 import '../providers/lab_records_provider.dart';
+import '../providers/language_provider.dart';
 import '../providers/profile_provider.dart';
 import '../providers/settings_provider.dart';
 import '../services/risk_model.dart';
 import '../theme/ds.dart';
 import '../widgets/ds_widgets.dart';
+import '../widgets/language_picker.dart';
 import 'profile_form_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -25,42 +28,24 @@ class ProfileScreen extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Your privacy', style: DS.text(weight: FontWeight.w800)),
+        title: Text('Your privacy'.tr, style: DS.text(weight: FontWeight.w800)),
         content: Text(
           auth.isSignedIn
               ? 'Your confirmed lab values sync to your Supabase account and '
-                    'stay cached on this device for offline use. Photos are '
-                    'read on your phone and are not uploaded. Your body '
-                    'measurements stay on this device.'
+                        'stay cached on this device for offline use. Photos are '
+                        'read on your phone and are not uploaded. Your body '
+                        'measurements stay on this device.'
+                    .tr
               : 'No account is active. Results and measurements stay on this '
-                    'device and are not uploaded. Photos are read on your '
-                    'phone.',
+                        'device and are not uploaded. Photos are read on your '
+                        'phone.'
+                    .tr,
           style: DS.text(size: 15, height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _language(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Language', style: DS.text(weight: FontWeight.w800)),
-        content: Text(
-          'ShifAI is in English for now. French and Arabic are the next '
-          'languages to be added.',
-          style: DS.text(size: 15, height: 1.5),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
+            child: Text('Close'.tr),
           ),
         ],
       ),
@@ -83,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Text size',
+                'Text size'.tr,
                 style: DS.text(size: 24, weight: FontWeight.w800),
               ),
               const SizedBox(height: 14),
@@ -91,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
                 Semantics(
                   button: true,
                   selected: entry.key == settings.textScale,
-                  label: entry.value,
+                  label: entry.value.tr,
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
@@ -104,7 +89,7 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              entry.value,
+                              entry.value.tr,
                               style: DS.text(
                                 size: 16.5 * entry.key,
                                 weight: entry.key == settings.textScale
@@ -137,7 +122,7 @@ class ProfileScreen extends StatelessWidget {
       if (context.mounted) _soon(context, error.message);
     } on ClientException {
       if (context.mounted) {
-        _soon(context, 'Could not reach Supabase. Try again when online.');
+        _soon(context, 'Could not reach Supabase. Try again when online.'.tr);
       }
     }
   }
@@ -150,14 +135,16 @@ class ProfileScreen extends StatelessWidget {
     final p = profileProvider.profile;
     final assessment = profileProvider.assessment;
 
-    final display = auth.displayName == 'ShifAI member' ? '' : auth.displayName;
+    final display = auth.displayName == 'ShifAI member'
+        ? ''
+        : auth.displayName;
     final initial = (display.isNotEmpty ? display : (auth.email ?? 'S'))
         .characters
         .first
         .toUpperCase();
     final name = auth.isSignedIn
-        ? (display.isNotEmpty ? display : 'ShifAI member')
-        : 'This device';
+        ? (display.isNotEmpty ? display : 'ShifAI member'.tr)
+        : 'This device'.tr;
 
     return DsBackground(
       child: SafeArea(
@@ -205,7 +192,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          auth.email ?? 'Not signed in',
+                          auth.email ?? 'Not signed in'.tr,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: DS.text(
@@ -220,7 +207,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   if (auth.isSignedIn)
                     DsPill(
-                      labs.syncError == null ? 'Synced' : 'Sync paused',
+                      labs.syncError == null ? 'Synced'.tr : 'Sync paused'.tr,
                       background: labs.syncError == null
                           ? DS.greenTint
                           : DS.amberTint,
@@ -231,8 +218,8 @@ class ProfileScreen extends StatelessWidget {
                       size: 12.5,
                     )
                   else
-                    const DsPill(
-                      'On device',
+                    DsPill(
+                      'On device'.tr,
                       background: DS.skyTint,
                       foreground: DS.navy,
                       size: 12.5,
@@ -242,8 +229,8 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 22),
             DsSectionHeader(
-              'My measurements',
-              action: p == null ? 'Add' : 'Edit',
+              'My measurements'.tr,
+              action: p == null ? 'Add'.tr : 'Edit'.tr,
               onAction: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const ProfileFormScreen()),
               ),
@@ -254,7 +241,8 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Text(
                   'Add your age, height, weight and waist to get a risk '
-                  'estimate. No blood test needed.',
+                          'estimate. No blood test needed.'
+                      .tr,
                   style: DS.text(
                     size: 14.5,
                     weight: FontWeight.w500,
@@ -272,10 +260,10 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisSpacing: 12,
                 childAspectRatio: 2.2,
                 children: [
-                  _Tile('Age', '${p.age}'),
-                  _Tile('Sex', p.female ? 'Female' : 'Male'),
-                  _Tile('Height', p.heightCm.toStringAsFixed(0), unit: 'cm'),
-                  _Tile('Weight', p.weightKg.toStringAsFixed(0), unit: 'kg'),
+                  _Tile('Age'.tr, '${p.age}'),
+                  _Tile('Sex'.tr, p.female ? 'Female'.tr : 'Male'.tr),
+                  _Tile('Height'.tr, p.heightCm.toStringAsFixed(0), unit: 'cm'),
+                  _Tile('Weight'.tr, p.weightKg.toStringAsFixed(0), unit: 'kg'),
                 ],
               ),
             if (assessment != null) ...[
@@ -289,28 +277,31 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   _SettingRow(
                     icon: Icons.language_rounded,
-                    label: 'Language',
-                    value: 'English',
-                    onTap: () => _language(context),
+                    label: 'Language'.tr,
+                    value: context
+                        .watch<LanguageProvider>()
+                        .language
+                        .nativeName,
+                    onTap: () => pickLanguage(context),
                   ),
                   const Divider(height: 1, color: DS.divider),
                   _SettingRow(
                     glyph: 'Aa',
-                    label: 'Text size',
-                    value: context.watch<SettingsProvider>().textSizeLabel,
+                    label: 'Text size'.tr,
+                    value: context.watch<SettingsProvider>().textSizeLabel.tr,
                     onTap: () => _textSize(context),
                   ),
                   const Divider(height: 1, color: DS.divider),
                   _SettingRow(
                     icon: Icons.lock_outline_rounded,
-                    label: 'Privacy',
+                    label: 'Privacy'.tr,
                     onTap: () => _privacy(context, auth),
                   ),
                   if (auth.isSignedIn) ...[
                     const Divider(height: 1, color: DS.divider),
                     _SettingRow(
                       icon: Icons.file_download_outlined,
-                      label: 'Import local-only results',
+                      label: 'Import local-only results'.tr,
                       onTap: () => _importLocalRecords(context),
                     ),
                   ],
@@ -320,7 +311,7 @@ class ProfileScreen extends StatelessWidget {
             if (auth.isSignedIn) ...[
               const SizedBox(height: 22),
               DsOutlineButton(
-                label: auth.busy ? 'Signing out…' : 'Sign out',
+                label: auth.busy ? 'Signing out…'.tr : 'Sign out'.tr,
                 icon: Icons.logout_rounded,
                 color: const Color(0xFFB3261E),
                 iconColor: const Color(0xFFB3261E),
@@ -331,7 +322,8 @@ class ProfileScreen extends StatelessWidget {
             Center(
               child: Text(
                 'ShifAI is a screening tool, not a diagnosis.\n'
-                'Please review your results with your doctor.',
+                        'Please review your results with your doctor.'
+                    .tr,
                 textAlign: TextAlign.center,
                 style: DS.text(
                   size: 13.5,
@@ -352,7 +344,7 @@ class ProfileScreen extends StatelessWidget {
     final count = await provider.guestRecordCount();
     if (!context.mounted) return;
     if (count == 0) {
-      _soon(context, 'There are no local-only results to import.');
+      _soon(context, 'There are no local-only results to import.'.tr);
       return;
     }
 
@@ -360,22 +352,26 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'Import local results?',
+          'Import local results?'.tr,
           style: DS.text(weight: FontWeight.w800),
         ),
         content: Text(
-          '$count local result${count == 1 ? '' : 's'} will be copied to this '
-          'signed-in account. Existing account records will not be replaced.',
+          (count == 1
+                  ? '1 local result will be copied to this signed-in account. '
+                        'Existing account records will not be replaced.'
+                  : '{count} local results will be copied to this signed-in '
+                        'account. Existing account records will not be replaced.')
+              .trf({'count': count}),
           style: DS.text(size: 15, height: 1.45),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'.tr),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Import'),
+            child: Text('Import'.tr),
           ),
         ],
       ),
@@ -387,10 +383,16 @@ class ProfileScreen extends StatelessWidget {
       _soon(
         context,
         imported == 0
-            ? 'Those local results are already in this account.'
+            ? 'Those local results are already in this account.'.tr
             : provider.syncError == null
-            ? '$imported result${imported == 1 ? '' : 's'} synced to this account.'
-            : '$imported result${imported == 1 ? '' : 's'} saved locally; cloud sync will retry.',
+            ? (imported == 1
+                      ? '1 result synced to this account.'
+                      : '{count} results synced to this account.')
+                  .trf({'count': imported})
+            : (imported == 1
+                      ? '1 result saved locally; cloud sync will retry.'
+                      : '{count} results saved locally; cloud sync will retry.')
+                  .trf({'count': imported}),
       );
     }
   }
@@ -470,7 +472,7 @@ class _RiskRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Estimated risk',
+                  'Estimated risk'.tr,
                   style: DS.text(
                     size: 13.5,
                     weight: FontWeight.w600,
@@ -479,7 +481,11 @@ class _RiskRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  band.label.replaceAll(' risk', ''),
+                  switch (band) {
+                    RiskBand.low => 'Low',
+                    RiskBand.moderate => 'Moderate',
+                    RiskBand.high => 'High',
+                  }.tr,
                   style: DS.text(size: 19, weight: FontWeight.w800),
                 ),
                 const SizedBox(height: 10),

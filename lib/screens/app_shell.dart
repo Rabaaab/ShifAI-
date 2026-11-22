@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../providers/coaching_provider.dart';
 import '../providers/lab_records_provider.dart';
 import '../providers/nav_provider.dart';
@@ -32,7 +33,7 @@ class AppShell extends StatelessWidget {
                     records.clearSyncError();
                     coaching.clearSyncError();
                   },
-                  child: const Text('Dismiss'),
+                  child: Text('Dismiss'.tr),
                 ),
               ],
             ),

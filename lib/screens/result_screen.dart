@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/doctor.dart';
 import '../models/lab_record.dart';
 import '../providers/lab_records_provider.dart';
@@ -197,7 +198,8 @@ class _ResultScreenState extends State<ResultScreen> {
                                       const SizedBox(height: 10),
                                       Text(
                                         'Chance that your HOMA-IR is 2.5 or '
-                                        'higher, without an insulin test.',
+                                                'higher, without an insulin test.'
+                                            .tr,
                                         style: DS.text(
                                           size: 13.5,
                                           weight: FontWeight.w500,
@@ -214,7 +216,13 @@ class _ResultScreenState extends State<ResultScreen> {
                               const SizedBox(height: 16),
                               Text(
                                 'Mainly because of: '
-                                '${assessment.topFactors(max: 3).map((f) => f.label.toLowerCase()).join(', ')}.',
+                                        '{v}.'
+                                    .trf({
+                                      'v': assessment
+                                          .topFactors(max: 3)
+                                          .map((f) => f.label.toLowerCase())
+                                          .join(', '),
+                                    }),
                                 style: DS.text(
                                   size: 14,
                                   weight: FontWeight.w600,
@@ -225,7 +233,8 @@ class _ResultScreenState extends State<ResultScreen> {
                           ] else ...[
                             Text(
                               'To turn these values into an estimate, add your '
-                              'age, sex, height, weight and waist.',
+                                      'age, sex, height, weight and waist.'
+                                  .tr,
                               style: DS.text(
                                 size: 14.5,
                                 weight: FontWeight.w500,
@@ -235,7 +244,7 @@ class _ResultScreenState extends State<ResultScreen> {
                             ),
                             const SizedBox(height: 14),
                             DsPrimaryButton(
-                              label: 'Add my measurements',
+                              label: 'Add my measurements'.tr,
                               height: 52,
                               onPressed: () => Navigator.of(context).push(
                                 MaterialPageRoute(
@@ -248,7 +257,7 @@ class _ResultScreenState extends State<ResultScreen> {
                           Row(
                             children: [
                               mini(
-                                'Glucose',
+                                'Glucose'.tr,
                                 record.fastingGlucoseMgdl!.toStringAsFixed(0),
                                 'mg/dL',
                               ),
@@ -264,7 +273,7 @@ class _ResultScreenState extends State<ResultScreen> {
                           Row(
                             children: [
                               mini(
-                                'Triglycerides',
+                                'Triglycerides'.tr,
                                 record.triglyceridesMgdl!.toStringAsFixed(0),
                                 'mg/dL',
                               ),
@@ -285,7 +294,8 @@ class _ResultScreenState extends State<ResultScreen> {
                       padding: const EdgeInsets.all(20),
                       child: Text(
                         'This estimate does not need an insulin test. A fasting '
-                        'insulin test gives your exact HOMA-IR.',
+                                'insulin test gives your exact HOMA-IR.'
+                            .tr,
                         style: DS.text(
                           size: 14.5,
                           weight: FontWeight.w500,
@@ -306,12 +316,12 @@ class _ResultScreenState extends State<ResultScreen> {
                 child: Column(
                   children: [
                     DsOutlineButton(
-                      label: 'Save and see my trends',
+                      label: 'Save and see my trends'.tr,
                       onPressed: _saving ? null : _saveAndTrends,
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'A screening estimate, not a diagnosis.',
+                      'A screening estimate, not a diagnosis.'.tr,
                       style: DS.text(
                         size: 13.5,
                         weight: FontWeight.w500,
@@ -442,7 +452,11 @@ class _ResultScreenState extends State<ResultScreen> {
                                     BandChip(band: band, size: 13.5),
                                     const SizedBox(height: 10),
                                     Text(
-                                      'Test date: ${DateFormat.yMMMd().format(record.date)}',
+                                      'Test date: {v}'.trf({
+                                        'v': DateFormat.yMMMd().format(
+                                          record.date,
+                                        ),
+                                      }),
                                       style: DS.text(
                                         size: 14,
                                         weight: FontWeight.w500,
@@ -458,13 +472,13 @@ class _ResultScreenState extends State<ResultScreen> {
                           Row(
                             children: [
                               mini(
-                                'Glucose',
+                                'Glucose'.tr,
                                 record.fastingGlucoseMgdl!.toStringAsFixed(0),
                                 'mg/dL',
                               ),
                               const SizedBox(width: 10),
                               mini(
-                                'Insulin',
+                                'Insulin'.tr,
                                 record.fastingInsulinUiuml!.toStringAsFixed(1),
                                 'uIU/mL',
                               ),
@@ -498,12 +512,12 @@ class _ResultScreenState extends State<ResultScreen> {
                 child: Column(
                   children: [
                     DsOutlineButton(
-                      label: 'Save and see my trends',
+                      label: 'Save and see my trends'.tr,
                       onPressed: _saving ? null : _saveAndTrends,
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'A screening estimate, not a diagnosis.',
+                      'A screening estimate, not a diagnosis.'.tr,
                       style: DS.text(
                         size: 13.5,
                         weight: FontWeight.w500,
@@ -578,7 +592,7 @@ class _DoctorSuggestion extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'See a doctor about this result',
+                'See a doctor about this result'.tr,
                 style: DS.text(
                   size: 22,
                   weight: FontWeight.w700,
@@ -589,10 +603,15 @@ class _DoctorSuggestion extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 city == null
-                    ? 'Endocrinologists near you'
+                    ? 'Endocrinologists near you'.tr
                     : (nearby.isEmpty
-                          ? 'Doctors are being added in $city'
-                          : '${nearby.length} endocrinologists in $city'),
+                          ? 'Doctors are being added in {city}'.trf({
+                              'city': city,
+                            })
+                          : '{length} endocrinologists in {city}'.trf({
+                              'length': nearby.length,
+                              'city': city,
+                            })),
                 style: DS.text(
                   size: 14.5,
                   weight: FontWeight.w500,
@@ -602,7 +621,7 @@ class _DoctorSuggestion extends StatelessWidget {
               const SizedBox(height: 18),
               Semantics(
                 button: true,
-                label: 'Find a doctor',
+                label: 'Find a doctor'.tr,
                 child: GestureDetector(
                   onTap: onFind,
                   child: Container(
@@ -613,7 +632,7 @@ class _DoctorSuggestion extends StatelessWidget {
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
-                      'Find a doctor',
+                      'Find a doctor'.tr,
                       style: DS.text(
                         size: 16.5,
                         weight: FontWeight.w700,

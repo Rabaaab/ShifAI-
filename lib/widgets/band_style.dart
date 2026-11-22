@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lab_record.dart';
 import '../theme/ds.dart';
 import 'ds_widgets.dart';
@@ -47,17 +48,21 @@ String bandExplanation(HomaIrBand band) {
   switch (band) {
     case HomaIrBand.optimal:
       return 'Your body is handling blood glucose with very little insulin. '
-          'Keep up the habits that got you here.';
+              'Keep up the habits that got you here.'
+          .tr;
     case HomaIrBand.normal:
       return 'Your result is within the usual range. Regular walks and '
-          'balanced meals help keep it there.';
+              'balanced meals help keep it there.'
+          .tr;
     case HomaIrBand.earlyResistance:
       return 'Your body is producing more insulin than usual to manage blood '
-          'glucose. This stage often responds well to everyday lifestyle '
-          'changes.';
+              'glucose. This stage often responds well to everyday lifestyle '
+              'changes.'
+          .tr;
     case HomaIrBand.significantResistance:
       return 'Your body needs a lot of insulin to manage blood glucose. This '
-          'is worth discussing with your doctor. ShifAI cannot diagnose you.';
+              'is worth discussing with your doctor. ShifAI cannot diagnose you.'
+          .tr;
   }
 }
 

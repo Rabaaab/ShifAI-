@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../providers/activity_provider.dart';
 import '../providers/appointment_provider.dart';
 import '../providers/lab_records_provider.dart';
@@ -109,13 +110,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        'Nothing new',
+                        'Nothing new'.tr,
                         style: DS.text(size: 19, weight: FontWeight.w800),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Reminders about your tests, appointment, medicine and '
-                        'activity show up here.',
+                                'activity show up here.'
+                            .tr,
                         textAlign: TextAlign.center,
                         style: DS.text(
                           size: 14.5,
@@ -180,7 +182,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               const SizedBox(height: 10),
               Text(
                 'These reminders appear inside the app. Alerts on your phone '
-                'screen are not set up yet.',
+                        'screen are not set up yet.'
+                    .tr,
                 textAlign: TextAlign.center,
                 style: DS.text(
                   size: 13.5,

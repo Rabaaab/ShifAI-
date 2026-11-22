@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/user_profile.dart';
 import '../providers/profile_provider.dart';
 import '../theme/ds.dart';
@@ -46,8 +47,14 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
 
   String? _range(String? value, double min, double max, String unit) {
     final v = double.tryParse((value ?? '').replaceAll(',', '.'));
-    if (v == null) return 'Required';
-    if (v < min || v > max) return 'Enter ${min.toInt()}–${max.toInt()} $unit';
+    if (v == null) return 'Required'.tr;
+    if (v < min || v > max) {
+      return 'Enter {v}–{v2} {unit}'.trf({
+        'v': min.toInt(),
+        'v2': max.toInt(),
+        'unit': unit,
+      });
+    }
     return null;
   }
 
@@ -144,7 +151,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                       const DsTitle('My', 'measurements', size: 36),
                       const SizedBox(height: 12),
                       Text(
-                        'Private. Used for your risk estimate.',
+                        'Private. Used for your risk estimate.'.tr,
                         style: DS.text(
                           size: 15.5,
                           weight: FontWeight.w500,
@@ -161,9 +168,9 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                         ),
                         child: Row(
                           children: [
-                            for (final entry in const {
-                              true: 'Female',
-                              false: 'Male',
+                            for (final entry in {
+                              true: 'Female'.tr,
+                              false: 'Male'.tr,
                             }.entries)
                               Expanded(
                                 child: Semantics(
@@ -213,26 +220,26 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                         children: [
                           _tile(
                             _age,
-                            'Age',
+                            'Age'.tr,
                             'years',
                             (v) => _range(v, 18, 90, 'years'),
                             digitsOnly: true,
                           ),
                           _tile(
                             _height,
-                            'Height',
+                            'Height'.tr,
                             'cm',
                             (v) => _range(v, 120, 230, 'cm'),
                           ),
                           _tile(
                             _weight,
-                            'Weight',
+                            'Weight'.tr,
                             'kg',
                             (v) => _range(v, 30, 250, 'kg'),
                           ),
                           _tile(
                             _waist,
-                            'Waist',
+                            'Waist'.tr,
                             'cm',
                             (v) => _range(v, 40, 200, 'cm'),
                           ),
@@ -252,7 +259,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Measure your waist at belly button level.',
+                                'Measure your waist at belly button level.'.tr,
                                 style: DS.text(
                                   size: 14,
                                   weight: FontWeight.w500,
@@ -269,7 +276,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
-                  child: DsPrimaryButton(label: 'Save', onPressed: _save),
+                  child: DsPrimaryButton(label: 'Save'.tr, onPressed: _save),
                 ),
               ],
             ),

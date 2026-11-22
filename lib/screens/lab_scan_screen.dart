@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../l10n/l10n.dart';
 import '../services/lab_ocr_service.dart';
 import '../theme/ds.dart';
 import '../widgets/ds_widgets.dart';
@@ -52,7 +53,8 @@ class _LabScanScreenState extends State<LabScanScreen> {
         setState(
           () => _error =
               "Couldn't find glucose, insulin or HbA1c in this photo. Try a "
-              'clearer, well-lit photo, or type the values in.',
+                      'clearer, well-lit photo, or type the values in.'
+                  .tr,
         );
         return;
       }
@@ -77,7 +79,8 @@ class _LabScanScreenState extends State<LabScanScreen> {
       if (!mounted) return;
       setState(() {
         _processing = false;
-        _error = 'Could not read this image. Try again or type the values in.';
+        _error =
+            'Could not read this image. Try again or type the values in.'.tr;
       });
     }
   }
@@ -111,7 +114,7 @@ class _LabScanScreenState extends State<LabScanScreen> {
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
-                        'Step 1 of 2',
+                        'Step 1 of 2'.tr,
                         style: DS.text(
                           size: 14,
                           weight: FontWeight.w700,
@@ -197,7 +200,7 @@ class _LabScanScreenState extends State<LabScanScreen> {
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
-                            'Fit the page in the frame',
+                            'Fit the page in the frame'.tr,
                             style: DS.text(
                               size: 14.5,
                               weight: FontWeight.w600,
@@ -216,13 +219,13 @@ class _LabScanScreenState extends State<LabScanScreen> {
               children: [
                 _roundButton(
                   Icons.edit_outlined,
-                  'Type the values in',
+                  'Type the values in'.tr,
                   _enterManually,
                 ),
                 _shutter(),
                 _roundButton(
                   Icons.photo_library_outlined,
-                  'Choose from the gallery',
+                  'Choose from the gallery'.tr,
                   _processing ? null : () => _capture(ImageSource.gallery),
                 ),
               ],
@@ -255,7 +258,7 @@ class _LabScanScreenState extends State<LabScanScreen> {
   Widget _shutter() {
     return Semantics(
       button: true,
-      label: 'Take a photo',
+      label: 'Take a photo'.tr,
       child: GestureDetector(
         onTap: _processing ? null : () => _capture(ImageSource.camera),
         child: Container(

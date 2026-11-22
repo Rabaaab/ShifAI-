@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lab_record.dart';
 import '../models/wellness_content.dart';
 import '../providers/activity_provider.dart';
@@ -27,22 +28,27 @@ class _WellnessScreenState extends State<WellnessScreen> {
     switch (band) {
       case HomaIrBand.significantResistance:
         return 'Start gently and steadily: a 10-minute walk after your biggest '
-            'meal, and swap sugary drinks for water or plain mint tea. Talk to '
-            'your doctor before starting anything intense.';
+                'meal, and swap sugary drinks for water or plain mint tea. Talk to '
+                'your doctor before starting anything intense.'
+            .tr;
       case HomaIrBand.earlyResistance:
         return 'This is the stage where habits matter most. Aim for 150 minutes '
-            'of activity a week, walk after meals, and cut sugar in tea and '
-            'drinks first.';
+                'of activity a week, walk after meals, and cut sugar in tea and '
+                'drinks first.'
+            .tr;
       case HomaIrBand.optimal:
       case HomaIrBand.normal:
         return 'Your last result is in a good range. Keep your routine: '
-            'vegetables and legumes at most meals, and stay active most days.';
+                'vegetables and legumes at most meals, and stay active most days.'
+            .tr;
       case null:
         return bmi != null && bmi >= 25
             ? 'A 10-minute walk after your biggest meal and fewer sugary '
-                  'drinks are the two easiest places to start.'
+                      'drinks are the two easiest places to start.'
+                  .tr
             : 'Walk for 10 minutes after your biggest meal and fill half your '
-                  'plate with vegetables. Small habits, every day.';
+                      'plate with vegetables. Small habits, every day.'
+                  .tr;
     }
   }
 
@@ -67,7 +73,7 @@ class _WellnessScreenState extends State<WellnessScreen> {
               const DsTitle('Eat and', 'move', size: 36),
               const SizedBox(height: 14),
               Text(
-                'General guidance to lower your risk of diabetes.',
+                'General guidance to lower your risk of diabetes.'.tr,
                 style: DS.text(
                   size: 15.5,
                   weight: FontWeight.w500,
@@ -77,7 +83,7 @@ class _WellnessScreenState extends State<WellnessScreen> {
               ),
               const SizedBox(height: 18),
               DsSegmented<_Tab>(
-                options: const {_Tab.eat: 'Eat', _Tab.move: 'Move'},
+                options: {_Tab.eat: 'Eat'.tr, _Tab.move: 'Move'.tr},
                 value: _tab,
                 height: 48,
                 fontSize: 15,
@@ -92,7 +98,8 @@ class _WellnessScreenState extends State<WellnessScreen> {
               const SizedBox(height: 22),
               Text(
                 'General advice, not a personal diet or exercise plan. A doctor '
-                'or dietitian can adapt it to you.',
+                        'or dietitian can adapt it to you.'
+                    .tr,
                 textAlign: TextAlign.center,
                 style: DS.text(
                   size: 13.5,
@@ -126,14 +133,14 @@ class _WellnessScreenState extends State<WellnessScreen> {
     const _AfterMealCard(),
     const SizedBox(height: 22),
     Text(
-      'Get your heart rate up',
+      'Get your heart rate up'.tr,
       style: DS.text(size: 17, weight: FontWeight.w700),
     ),
     const SizedBox(height: 10),
     for (final e in aerobicIdeas) _IdeaRow(e),
     const SizedBox(height: 18),
     Text(
-      'Build muscle, 2 days a week',
+      'Build muscle, 2 days a week'.tr,
       style: DS.text(size: 17, weight: FontWeight.w700),
     ),
     const SizedBox(height: 10),
@@ -152,8 +159,9 @@ class _WellnessScreenState extends State<WellnessScreen> {
           Expanded(
             child: Text(
               'Stop and get help if you feel chest pain, dizziness or severe '
-              'shortness of breath. With a heart condition, or a high result, '
-              'check with your doctor before starting.',
+                      'shortness of breath. With a heart condition, or a high result, '
+                      'check with your doctor before starting.'
+                  .tr,
               style: DS.text(
                 size: 14,
                 weight: FontWeight.w600,
@@ -184,7 +192,7 @@ class _FocusCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Your focus',
+          'Your focus'.tr,
           style: DS.text(size: 13.5, weight: FontWeight.w700, color: DS.sky),
         ),
         const SizedBox(height: 8),
@@ -237,12 +245,12 @@ class _PlateCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Build your plate',
+            'Build your plate'.tr,
             style: DS.text(size: 18, weight: FontWeight.w700),
           ),
           const SizedBox(height: 4),
           Text(
-            'The same idea for every meal, tagine or not.',
+            'The same idea for every meal, tagine or not.'.tr,
             style: DS.text(size: 14, color: DS.muted),
           ),
           const SizedBox(height: 14),
@@ -253,19 +261,19 @@ class _PlateCard extends StatelessWidget {
                 part(
                   2,
                   const Color(0xFFD4EEE0),
-                  'Vegetables\nhalf the plate',
+                  'Vegetables\nhalf the plate'.tr,
                   Icons.eco_outlined,
                 ),
                 part(
                   1,
                   const Color(0xFFFFE2A6),
-                  'Protein\na quarter',
+                  'Protein\na quarter'.tr,
                   Icons.set_meal_outlined,
                 ),
                 part(
                   1,
                   DS.skyTint,
-                  'Bread, rice,\ncouscous\na quarter',
+                  'Bread, rice,\ncouscous\na quarter'.tr,
                   Icons.grain_rounded,
                 ),
               ],
@@ -273,7 +281,8 @@ class _PlateCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            'Eat slowly, drink water, and leave the sweets for after the meal.',
+            'Eat slowly, drink water, and leave the sweets for after the meal.'
+                .tr,
             style: DS.text(
               size: 14,
               weight: FontWeight.w500,
@@ -314,10 +323,15 @@ class _FoodGroup extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(f.name, style: DS.text(size: 16, weight: FontWeight.w800)),
+                _Photo(f.image),
+                const SizedBox(height: 12),
+                Text(
+                  f.name.tr,
+                  style: DS.text(size: 16, weight: FontWeight.w800),
+                ),
                 const SizedBox(height: 2),
                 Text(
-                  f.examples,
+                  f.examples.tr,
                   style: DS.text(
                     size: 13,
                     weight: FontWeight.w500,
@@ -326,7 +340,7 @@ class _FoodGroup extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  f.advice,
+                  f.advice.tr,
                   style: DS.text(
                     size: 14.5,
                     weight: FontWeight.w500,
@@ -356,7 +370,7 @@ class _WeekCard extends StatelessWidget {
 
     Widget add(int minutes) => Expanded(
       child: DsOutlineButton(
-        label: '+$minutes min',
+        label: '+{minutes} min'.trf({'minutes': minutes}),
         height: 48,
         fontSize: 14.5,
         fill: DS.skyTint,
@@ -374,7 +388,7 @@ class _WeekCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'This week',
+                  'This week'.tr,
                   style: DS.text(
                     size: 15,
                     weight: FontWeight.w600,
@@ -383,8 +397,8 @@ class _WeekCard extends StatelessWidget {
                 ),
               ),
               if (done)
-                const DsPill(
-                  'Goal reached',
+                DsPill(
+                  'Goal reached'.tr,
                   background: DS.greenTint,
                   foreground: DS.greenText,
                 ),
@@ -403,7 +417,9 @@ class _WeekCard extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: ' of $weeklyGoalMinutes min',
+                  text: ' of {weeklyGoalMinutes} min'.trf({
+                    'weeklyGoalMinutes': weeklyGoalMinutes,
+                  }),
                   style: DS.text(
                     size: 16,
                     weight: FontWeight.w600,
@@ -425,7 +441,7 @@ class _WeekCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Log what you did today',
+            'Log what you did today'.tr,
             style: DS.text(size: 14, weight: FontWeight.w600, color: DS.muted),
           ),
           const SizedBox(height: 10),
@@ -444,7 +460,7 @@ class _WeekCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Today: $today min',
+                    'Today: {today} min'.trf({'today': today}),
                     style: DS.text(
                       size: 14,
                       weight: FontWeight.w600,
@@ -453,7 +469,7 @@ class _WeekCard extends StatelessWidget {
                   ),
                 ),
                 DsTextAction(
-                  'Undo today',
+                  'Undo today'.tr,
                   alignment: Alignment.centerRight,
                   onPressed: activity.clearToday,
                 ),
@@ -483,13 +499,14 @@ class _AfterMealCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Walk after you eat',
+                'Walk after you eat'.tr,
                 style: DS.text(size: 16.5, weight: FontWeight.w800),
               ),
               const SizedBox(height: 4),
               Text(
                 '10 to 15 minutes of easy walking after your biggest meal '
-                'helps your body use the sugar from it.',
+                        'helps your body use the sugar from it.'
+                    .tr,
                 style: DS.text(
                   size: 14.5,
                   weight: FontWeight.w500,
@@ -518,13 +535,15 @@ class _IdeaRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _Photo(exercise.image),
+          const SizedBox(height: 12),
           Text(
-            exercise.title,
+            exercise.title.tr,
             style: DS.text(size: 15.5, weight: FontWeight.w800),
           ),
           const SizedBox(height: 2),
           Text(
-            exercise.detail,
+            exercise.detail.tr,
             style: DS.text(
               size: 14,
               weight: FontWeight.w500,
@@ -534,6 +553,23 @@ class _IdeaRow extends StatelessWidget {
           ),
         ],
       ),
+    ),
+  );
+}
+
+/// Rounded photo at the top of a food or exercise card.
+class _Photo extends StatelessWidget {
+  const _Photo(this.asset);
+  final String asset;
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(16),
+    child: Image.asset(
+      asset,
+      height: 150,
+      width: double.infinity,
+      fit: BoxFit.cover,
     ),
   );
 }

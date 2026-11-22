@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lab_record.dart';
 import '../providers/lab_records_provider.dart';
 import '../providers/nav_provider.dart';
@@ -119,7 +120,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
         trigRaw == null &&
         hdlRaw == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter at least one value to continue.')),
+        SnackBar(content: Text('Enter at least one value to continue.'.tr)),
       );
       return;
     }
@@ -181,7 +182,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
     if (value.isEmpty) return null;
     final parsed = double.tryParse(value.replaceAll(',', '.'));
     if (parsed == null || !parsed.isFinite || parsed <= 0) {
-      return 'Enter a positive $label value.';
+      return 'Enter a positive {label} value.'.trf({'label': label});
     }
     return null;
   }
@@ -199,7 +200,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
       ),
       const SizedBox(width: 6),
       Text(
-        found ? 'From photo' : 'Not found',
+        found ? 'From photo'.tr : 'Not found'.tr,
         style: DS.text(
           size: 12.5,
           weight: FontWeight.w700,
@@ -324,7 +325,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                'Step 2 of 2',
+                                'Step 2 of 2'.tr,
                                 style: DS.text(
                                   size: 14,
                                   weight: FontWeight.w700,
@@ -341,8 +342,8 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                       const SizedBox(height: 12),
                       Text(
                         scan
-                            ? 'Compare with your paper report.'
-                            : 'Type the values from your lab report.',
+                            ? 'Compare with your paper report.'.tr
+                            : 'Type the values from your lab report.'.tr,
                         style: DS.text(
                           size: 15.5,
                           weight: FontWeight.w500,
@@ -352,11 +353,11 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                       ),
                       const SizedBox(height: 22),
                       _card(
-                        label: 'Fasting glucose',
+                        label: 'Fasting glucose'.tr,
                         tag: scan ? _tag(widget.initialGlucose != null) : null,
                         child: _valueRow(
                           controller: _glucoseCtrl,
-                          semanticLabel: 'Value',
+                          semanticLabel: 'Value'.tr,
                           validator: (v) =>
                               _validateOptionalPositive(v, 'glucose'),
                           units: DsSegmented<GlucoseUnit>(
@@ -373,11 +374,11 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                       ),
                       const SizedBox(height: 14),
                       _card(
-                        label: 'Fasting insulin',
+                        label: 'Fasting insulin'.tr,
                         tag: scan ? _tag(widget.initialInsulin != null) : null,
                         child: _valueRow(
                           controller: _insulinCtrl,
-                          semanticLabel: 'Value',
+                          semanticLabel: 'Value'.tr,
                           validator: (v) =>
                               _validateOptionalPositive(v, 'insulin'),
                           units: DsSegmented<InsulinUnit>(
@@ -395,7 +396,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                       _card(
                         label: 'HbA1c ',
                         labelSuffix: Text(
-                          '(optional)',
+                          '(optional)'.tr,
                           style: DS.text(
                             size: 15.5,
                             weight: FontWeight.w500,
@@ -410,7 +411,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                           ),
                           style: DS.text(size: 17, weight: FontWeight.w600),
                           decoration: dsFieldDecoration(
-                            hint: 'Add if you have it',
+                            hint: 'Add if you have it'.tr,
                             vertical: 18,
                             suffix: Padding(
                               padding: const EdgeInsets.only(right: 18),
@@ -437,7 +438,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                               (value ?? '').trim().replaceAll(',', '.'),
                             );
                             if (parsed != null && parsed > 100) {
-                              return 'Enter HbA1c as a percentage.';
+                              return 'Enter HbA1c as a percentage.'.tr;
                             }
                             return null;
                           },
@@ -445,9 +446,9 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                       ),
                       const SizedBox(height: 14),
                       _card(
-                        label: 'Triglycerides ',
+                        label: 'Triglycerides '.tr,
                         labelSuffix: Text(
-                          '(optional)',
+                          '(optional)'.tr,
                           style: DS.text(
                             size: 15.5,
                             weight: FontWeight.w500,
@@ -459,7 +460,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                             : null,
                         child: _valueRow(
                           controller: _trigCtrl,
-                          semanticLabel: 'Value',
+                          semanticLabel: 'Value'.tr,
                           validator: (v) =>
                               _validateOptionalPositive(v, 'triglycerides'),
                           units: DsSegmented<LipidUnit>(
@@ -476,9 +477,9 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                       ),
                       const SizedBox(height: 14),
                       _card(
-                        label: 'HDL cholesterol ',
+                        label: 'HDL cholesterol '.tr,
                         labelSuffix: Text(
-                          '(optional)',
+                          '(optional)'.tr,
                           style: DS.text(
                             size: 15.5,
                             weight: FontWeight.w500,
@@ -488,7 +489,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                         tag: scan ? _tag(widget.initialHdl != null) : null,
                         child: _valueRow(
                           controller: _hdlCtrl,
-                          semanticLabel: 'Value',
+                          semanticLabel: 'Value'.tr,
                           validator: (v) => _validateOptionalPositive(v, 'HDL'),
                           units: DsSegmented<LipidUnit>(
                             options: const {
@@ -504,10 +505,10 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                       ),
                       const SizedBox(height: 14),
                       _card(
-                        label: 'Test date',
+                        label: 'Test date'.tr,
                         child: Semantics(
                           button: true,
-                          label: 'Test date',
+                          label: 'Test date'.tr,
                           child: GestureDetector(
                             onTap: _pickDate,
                             child: Container(
@@ -558,7 +559,9 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                                 ),
                               ),
                               IconButton(
-                                tooltip: 'Remove ${_otherMarkers[i].name}',
+                                tooltip: 'Remove {v}'.trf({
+                                  'v': _otherMarkers[i].name,
+                                }),
                                 onPressed: () =>
                                     setState(() => _otherMarkers.removeAt(i)),
                                 icon: const Icon(
@@ -571,7 +574,7 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                         ),
                       ],
                       DsTextAction(
-                        'Add another lab value',
+                        'Add another lab value'.tr,
                         onPressed: _addMarker,
                       ),
                     ],
@@ -582,14 +585,14 @@ class _LabEntryFormScreenState extends State<LabEntryFormScreen> {
                   child: Column(
                     children: [
                       DsPrimaryButton(
-                        label: 'Confirm',
+                        label: 'Confirm'.tr,
                         loading: _saving,
                         onPressed: _confirm,
                       ),
                       if (scan) ...[
                         const SizedBox(height: 4),
                         DsTextAction(
-                          'Retake photo',
+                          'Retake photo'.tr,
                           onPressed: () => Navigator.of(context).maybePop(),
                         ),
                       ],
@@ -631,7 +634,7 @@ class _AddMarkerDialogState extends State<_AddMarkerDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add lab marker'),
+      title: Text('Add lab marker'.tr),
       content: Form(
         key: _formKey,
         child: Column(
@@ -639,9 +642,9 @@ class _AddMarkerDialogState extends State<_AddMarkerDialog> {
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Marker name'),
+              decoration: InputDecoration(labelText: 'Marker name'.tr),
               validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Enter a name.'
+                  ? 'Enter a name.'.tr
                   : null,
             ),
             const SizedBox(height: 12),
@@ -650,19 +653,19 @@ class _AddMarkerDialogState extends State<_AddMarkerDialog> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              decoration: const InputDecoration(labelText: 'Value'),
+              decoration: InputDecoration(labelText: 'Value'.tr),
               validator: (value) =>
                   widget.validateOptionalPositive(value, 'numeric') ??
                   ((double.tryParse((value ?? '').replaceAll(',', '.')) == null)
-                      ? 'Enter a valid value.'
+                      ? 'Enter a valid value.'.tr
                       : null),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _unitController,
-              decoration: const InputDecoration(labelText: 'Unit'),
+              decoration: InputDecoration(labelText: 'Unit'.tr),
               validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Enter a unit.'
+                  ? 'Enter a unit.'.tr
                   : null,
             ),
           ],
@@ -671,7 +674,7 @@ class _AddMarkerDialogState extends State<_AddMarkerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text('Cancel'.tr),
         ),
         FilledButton(
           onPressed: () {
@@ -687,7 +690,7 @@ class _AddMarkerDialogState extends State<_AddMarkerDialog> {
               ),
             );
           },
-          child: const Text('Add marker'),
+          child: Text('Add marker'.tr),
         ),
       ],
     );

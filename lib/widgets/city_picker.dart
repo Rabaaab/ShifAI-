@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/morocco_cities.dart';
 import '../providers/settings_provider.dart';
 import '../theme/ds.dart';
@@ -51,7 +52,7 @@ class _CitySheetState extends State<_CitySheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Choose your city',
+                'Choose your city'.tr,
                 style: DS.text(size: 24, weight: FontWeight.w800),
               ),
               const SizedBox(height: 14),
@@ -60,7 +61,7 @@ class _CitySheetState extends State<_CitySheet> {
                 style: DS.text(weight: FontWeight.w600),
                 onChanged: (v) => setState(() => _query = v),
                 decoration: dsFieldDecoration(
-                  hint: 'Search a city',
+                  hint: 'Search a city'.tr,
                   vertical: 16,
                   prefix: const Icon(Icons.search_rounded, color: DS.iconMuted),
                 ),
@@ -71,7 +72,7 @@ class _CitySheetState extends State<_CitySheet> {
                     ? Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Text(
-                          'No city found.',
+                          'No city found.'.tr,
                           style: DS.text(color: DS.muted),
                         ),
                       )

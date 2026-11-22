@@ -2,8 +2,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/ds.dart';
 import '../widgets/ds_widgets.dart';
+import '../widgets/language_picker.dart';
 import 'auth_screen.dart';
 
 /// First screen for a signed-out user.
@@ -25,32 +27,46 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset(
-                  'assets/images/shifai_logo.png',
-                  width: 168,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.centerLeft,
-                  semanticLabel: 'ShifAI',
+                Row(
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Image.asset(
+                          'assets/images/shifai_logo.png',
+                          width: 168,
+                          fit: BoxFit.contain,
+                          alignment: Alignment.centerLeft,
+                          semanticLabel: 'ShifAI',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const LanguageButton(),
+                  ],
                 ),
                 const SizedBox(height: 30),
                 Text.rich(
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Know your\n',
+                        text: 'Know your\n'.tr,
                         style: DS.text(size: 38, weight: FontWeight.w500),
                       ),
                       TextSpan(
-                        text: 'insulin health.',
+                        text: 'insulin health.'.tr,
                         style: DS.text(size: 38, weight: FontWeight.w800),
                       ),
                     ],
                   ),
-                  style: const TextStyle(height: 1.12, letterSpacing: -0.76),
+                  style: TextStyle(
+                    height: 1.12,
+                    letterSpacing: L10n.current == AppLanguage.ar ? 0 : -0.76,
+                  ),
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  'Scan a lab report. Watch your trend.',
+                  'Scan a lab report. Watch your trend.'.tr,
                   style: DS.text(
                     size: 17,
                     weight: FontWeight.w500,
@@ -60,12 +76,12 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 const Expanded(child: _Illustration()),
                 DsPrimaryButton(
-                  label: 'Get started',
+                  label: 'Get started'.tr,
                   onPressed: () => _open(context, AuthStart.createAccount),
                 ),
                 const SizedBox(height: 6),
                 DsTextAction(
-                  'I already have an account',
+                  'I already have an account'.tr,
                   onPressed: () => _open(context, AuthStart.signIn),
                 ),
               ],
@@ -139,9 +155,9 @@ class _Illustration extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Flexible(
+                          Flexible(
                             child: DsPill(
-                              'Borderline',
+                              'Borderline'.tr,
                               background: DS.amberTint,
                               foreground: DS.amberText,
                             ),
@@ -197,7 +213,7 @@ class _Illustration extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Scan report',
+                        'Scan report'.tr,
                         style: DS.text(
                           size: 16,
                           weight: FontWeight.w700,
@@ -206,7 +222,7 @@ class _Illustration extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Read in seconds',
+                        'Read in seconds'.tr,
                         style: DS.text(
                           size: 13,
                           weight: FontWeight.w500,

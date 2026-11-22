@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lab_record.dart';
 import '../providers/appointment_provider.dart';
 import '../providers/medicine_provider.dart';
@@ -40,10 +41,14 @@ List<AppNotice> buildNotices({
       AppNotice(
         id: 'appt-${appointment.date.toIso8601String()}-${appointment.time}',
         kind: NoticeKind.appointment,
-        title: 'Appointment with ${appointment.doctor.name}',
+        title: 'Appointment with {name}'.trf({'name': appointment.doctor.name}),
         body:
-            '${DateFormat('d MMM').format(appointment.date)} at '
-            '${formatSlotTime(appointment.time)}',
+            '{v} at '
+                    '{v2}'
+                .trf({
+                  'v': DateFormat('d MMM').format(appointment.date),
+                  'v2': formatSlotTime(appointment.time),
+                }),
       ),
     );
   }
@@ -60,10 +65,10 @@ List<AppNotice> buildNotices({
           AppNotice(
             id: 'med-${m.id}-$day',
             kind: NoticeKind.medicine,
-            title: '${m.name} is due',
+            title: '{name} is due'.trf({'name': m.name}),
             body: [
               m.dose,
-              'planned at ${m.time}',
+              'planned at {time}'.trf({'time': m.time}),
             ].where((s) => s.isNotEmpty).join(', '),
           ),
         );
@@ -73,11 +78,11 @@ List<AppNotice> buildNotices({
 
   if (records.isEmpty) {
     out.add(
-      const AppNotice(
+      AppNotice(
         id: 'first-scan',
         kind: NoticeKind.lab,
-        title: 'Scan your first lab report',
-        body: 'It takes a minute and gives you your first score.',
+        title: 'Scan your first lab report'.tr,
+        body: 'It takes a minute and gives you your first score.'.tr,
       ),
     );
   } else {
@@ -88,8 +93,8 @@ List<AppNotice> buildNotices({
         AppNotice(
           id: 'lab-${last.id}',
           kind: NoticeKind.lab,
-          title: 'Time for a new lab test',
-          body: 'Your last result is $age days old.',
+          title: 'Time for a new lab test'.tr,
+          body: 'Your last result is {age} days old.'.trf({'age': age}),
         ),
       );
     }
@@ -99,8 +104,8 @@ List<AppNotice> buildNotices({
         AppNotice(
           id: 'doctor-${last.id}',
           kind: NoticeKind.doctor,
-          title: 'Your latest result is high',
-          body: 'Talking to a doctor is a good next step.',
+          title: 'Your latest result is high'.tr,
+          body: 'Talking to a doctor is a good next step.'.tr,
         ),
       );
     }
@@ -116,8 +121,11 @@ List<AppNotice> buildNotices({
       AppNotice(
         id: 'move-${Medicine.dayKey(monday)}',
         kind: NoticeKind.activity,
-        title: '$weekMinutes of $weeklyGoalMinutes minutes this week',
-        body: 'A 10-minute walk after a meal helps.',
+        title: '{weekMinutes} of {weeklyGoalMinutes} minutes this week'.trf({
+          'weekMinutes': weekMinutes,
+          'weeklyGoalMinutes': weeklyGoalMinutes,
+        }),
+        body: 'A 10-minute walk after a meal helps.'.tr,
       ),
     );
   }

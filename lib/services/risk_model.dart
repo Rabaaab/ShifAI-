@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../l10n/l10n.dart';
 import '../models/user_profile.dart';
 
 enum RiskBand { low, moderate, high }
@@ -11,11 +12,11 @@ extension RiskBandLabel on RiskBand {
   String get label {
     switch (this) {
       case RiskBand.low:
-        return 'Low risk';
+        return 'Low risk'.tr;
       case RiskBand.moderate:
-        return 'Moderate risk';
+        return 'Moderate risk'.tr;
       case RiskBand.high:
-        return 'High risk';
+        return 'High risk'.tr;
     }
   }
 }
@@ -246,7 +247,7 @@ class RiskModel {
       basis: basis,
       factors: [
         for (final c in set.contributions(x))
-          RiskFactor(c.key, _labels[c.key] ?? c.key, c.value),
+          RiskFactor(c.key, (_labels[c.key] ?? c.key).tr, c.value),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/ds.dart';
 
 /// Soft grey-white gradient behind every screen.
@@ -22,7 +23,7 @@ class DsBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
-    label: 'Back',
+    label: 'Back'.tr,
     child: GestureDetector(
       onTap: onPressed ?? () => Navigator.of(context).maybePop(),
       child: Container(
@@ -47,21 +48,31 @@ class DsTitle extends StatelessWidget {
   final double size;
 
   @override
-  Widget build(BuildContext context) => Text.rich(
-    TextSpan(
-      children: [
-        TextSpan(
-          text: '$first\n',
-          style: DS.text(size: size, weight: FontWeight.w500),
-        ),
-        TextSpan(
-          text: second,
-          style: DS.text(size: size, weight: FontWeight.w800),
-        ),
-      ],
-    ),
-    style: TextStyle(height: 1.1, letterSpacing: -size * 0.02),
-  );
+  Widget build(BuildContext context) {
+    // Translated as a pair ("Your|trends"), since word order differs between
+    // languages. An empty first part means the title fits on one line.
+    final parts = '$first|$second'.tr.split('|');
+    final (a, b) = parts.length == 2 ? (parts[0], parts[1]) : (first, second);
+    return Text.rich(
+      TextSpan(
+        children: [
+          if (a.isNotEmpty)
+            TextSpan(
+              text: '$a\n',
+              style: DS.text(size: size, weight: FontWeight.w500),
+            ),
+          TextSpan(
+            text: b,
+            style: DS.text(size: size, weight: FontWeight.w800),
+          ),
+        ],
+      ),
+      style: TextStyle(
+        height: 1.1,
+        letterSpacing: L10n.current == AppLanguage.ar ? 0 : -size * 0.02,
+      ),
+    );
+  }
 }
 
 class DsCard extends StatelessWidget {

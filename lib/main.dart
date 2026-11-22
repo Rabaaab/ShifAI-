@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'config/supabase_config.dart';
+import 'l10n/l10n.dart';
 import 'providers/activity_provider.dart';
 import 'providers/appointment_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/coaching_provider.dart';
+import 'providers/language_provider.dart';
 import 'providers/lab_records_provider.dart';
 import 'providers/medicine_provider.dart';
 import 'providers/nav_provider.dart';
@@ -24,6 +28,8 @@ import 'package:device_preview/device_preview.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Month and day names for French and Arabic dates.
+  await initializeDateFormatting();
   if (SupabaseConfig.isConfigured) {
     await Supabase.initialize(
       url: SupabaseConfig.url,
@@ -83,27 +89,37 @@ class ShifAiApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => ActivityProvider()),
         ChangeNotifierProvider(create: (_) => SkinCheckProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
-      child: MaterialApp(
-        locale: DevicePreview.locale(context),
-        builder: (context, child) {
-          final wrapped = DevicePreview.appBuilder(context, child);
-          // The text size chosen in Profile, on top of the phone's own setting.
-          final factor = context.watch<SettingsProvider>().textScale;
-          final media = MediaQuery.of(context);
-          return MediaQuery(
-            data: media.copyWith(
-              textScaler: TextScaler.linear(
-                media.textScaler.scale(1.0) * factor,
-              ),
-            ),
-            child: wrapped,
+      child: Builder(
+        builder: (context) {
+          final language = context.watch<LanguageProvider>().language;
+          return MaterialApp(
+            // A new key rebuilds every screen in the chosen language.
+            key: ValueKey(language),
+            locale: language.materialLocale,
+            supportedLocales: const [Locale('en'), Locale('fr'), Locale('ar')],
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            builder: (context, child) {
+              final wrapped = DevicePreview.appBuilder(context, child);
+              // The text size chosen in Profile, on top of the phone's own setting.
+              final factor = context.watch<SettingsProvider>().textScale;
+              final media = MediaQuery.of(context);
+              return MediaQuery(
+                data: media.copyWith(
+                  textScaler: TextScaler.linear(
+                    media.textScaler.scale(1.0) * factor,
+                  ),
+                ),
+                child: wrapped,
+              );
+            },
+            title: 'ShifAI',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light(),
+            home: const AppRootGate(),
           );
         },
-        title: 'ShifAI',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(),
-        home: const AppRootGate(),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/doctor.dart';
 import '../providers/appointment_provider.dart';
 import '../providers/auth_provider.dart';
@@ -30,7 +31,15 @@ class _BookScreenState extends State<BookScreen> {
     '14:30',
     '15:00',
   ];
-  static const _weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  static List<String> get _weekdays => [
+    'MON'.tr,
+    'TUE'.tr,
+    'WED'.tr,
+    'THU'.tr,
+    'FRI'.tr,
+    'SAT'.tr,
+    'SUN'.tr,
+  ];
 
   late final TextEditingController _name;
   late final TextEditingController _email;
@@ -92,7 +101,7 @@ class _BookScreenState extends State<BookScreen> {
     final email = _email.text.trim();
     if (name.isEmpty || !email.contains('@') || !email.contains('.')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter your name and a valid email.')),
+        SnackBar(content: Text('Enter your name and a valid email.'.tr)),
       );
       return;
     }
@@ -147,7 +156,7 @@ class _BookScreenState extends State<BookScreen> {
           suffixIcon: controller.text.isEmpty
               ? null
               : IconButton(
-                  tooltip: 'Clear $label',
+                  tooltip: 'Clear {label}'.trf({'label': label}),
                   onPressed: () => setState(controller.clear),
                   icon: const Icon(
                     Icons.close_rounded,
@@ -228,7 +237,7 @@ class _BookScreenState extends State<BookScreen> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '${doctor.specialty}, ${doctor.city}',
+                          '${doctor.specialty.tr}, ${doctor.city}',
                           style: DS.text(
                             size: 14,
                             weight: FontWeight.w500,
@@ -242,7 +251,7 @@ class _BookScreenState extends State<BookScreen> {
               ),
               const SizedBox(height: 26),
               Text(
-                'Enter your details',
+                'Enter your details'.tr,
                 style: DS.text(
                   size: 15,
                   weight: FontWeight.w700,
@@ -250,12 +259,12 @@ class _BookScreenState extends State<BookScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              _clearable(_name, Icons.person_outline_rounded, 'Name'),
+              _clearable(_name, Icons.person_outline_rounded, 'Name'.tr),
               const SizedBox(height: 12),
-              _clearable(_email, Icons.mail_outline_rounded, 'Email'),
+              _clearable(_email, Icons.mail_outline_rounded, 'Email'.tr),
               const SizedBox(height: 26),
               Text(
-                'Pick date and time',
+                'Pick date and time'.tr,
                 style: DS.text(
                   size: 15,
                   weight: FontWeight.w700,
@@ -365,12 +374,12 @@ class _BookScreenState extends State<BookScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Share my results',
+                            'Share my results'.tr,
                             style: DS.text(size: 16, weight: FontWeight.w700),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Stops if you cancel',
+                            'Stops if you cancel'.tr,
                             style: DS.text(
                               size: 13.5,
                               weight: FontWeight.w500,
@@ -389,14 +398,14 @@ class _BookScreenState extends State<BookScreen> {
               ),
               const SizedBox(height: 28),
               DsPrimaryButton(
-                label: 'Book now',
+                label: 'Book now'.tr,
                 loading: _saving,
                 onPressed: _book,
               ),
               const SizedBox(height: 12),
               Center(
                 child: Text(
-                  'The doctor confirms your request.',
+                  'The doctor confirms your request.'.tr,
                   style: DS.text(
                     size: 13.5,
                     weight: FontWeight.w500,

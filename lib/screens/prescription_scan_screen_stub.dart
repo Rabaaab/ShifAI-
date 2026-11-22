@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/ds.dart';
 import '../widgets/ds_widgets.dart';
 
@@ -23,7 +24,8 @@ class PrescriptionScanScreen extends StatelessWidget {
                 const SizedBox(height: 14),
                 Text(
                   'Reading a prescription from a photo works in the Android '
-                  'and iPhone app. On the web, add your medicine by hand.',
+                          'and iPhone app. On the web, add your medicine by hand.'
+                      .tr,
                   style: DS.text(
                     size: 15.5,
                     weight: FontWeight.w500,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n.dart';
 import '../models/doctor.dart';
 import '../providers/settings_provider.dart';
 import '../theme/ds.dart';
@@ -41,7 +42,7 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
               const SizedBox(height: 22),
               Semantics(
                 button: true,
-                label: 'Change city',
+                label: 'Change city'.tr,
                 child: GestureDetector(
                   onTap: () => pickCity(context),
                   child: Container(
@@ -62,7 +63,7 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            city ?? 'Choose your city',
+                            city ?? 'Choose your city'.tr,
                             style: DS.text(
                               weight: FontWeight.w600,
                               color: city == null ? DS.iconMuted : DS.ink,
@@ -88,7 +89,7 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                       Semantics(
                         button: true,
                         selected: s == _specialty,
-                        label: s,
+                        label: s.tr,
                         child: GestureDetector(
                           onTap: () => setState(() => _specialty = s),
                           child: Container(
@@ -102,7 +103,7 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
-                              s,
+                              s.tr,
                               style: DS.text(
                                 size: 14,
                                 weight: s == _specialty
@@ -126,11 +127,13 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    city == null ? 'Doctors' : 'In $city',
+                    city == null
+                        ? 'Doctors'.tr
+                        : 'In {city}'.trf({'city': city}),
                     style: DS.text(size: 17, weight: FontWeight.w700),
                   ),
                   Text(
-                    'Sample list',
+                    'Sample list'.tr,
                     style: DS.text(
                       size: 13,
                       weight: FontWeight.w600,
@@ -146,12 +149,12 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Choose your city to see the doctors listed there.',
+                        'Choose your city to see the doctors listed there.'.tr,
                         style: DS.text(color: DS.muted, height: 1.45),
                       ),
                       const SizedBox(height: 14),
                       DsPrimaryButton(
-                        label: 'Choose your city',
+                        label: 'Choose your city'.tr,
                         height: 54,
                         onPressed: () => pickCity(context),
                       ),
@@ -161,8 +164,9 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
               else if (doctors.isEmpty)
                 DsCard(
                   child: Text(
-                    'No $_specialty is listed in $city yet. Doctors will be '
-                    'added city by city. Try a bigger city nearby.',
+                    'No {specialty} is listed in {city} yet. Doctors will be '
+                            'added city by city. Try a bigger city nearby.'
+                        .trf({'specialty': _specialty.tr, 'city': city}),
                     style: DS.text(color: DS.muted, height: 1.45),
                   ),
                 )
@@ -182,7 +186,7 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Doctors will be verified before they are listed.',
+                      'Doctors will be verified before they are listed.'.tr,
                       style: DS.text(
                         size: 14,
                         weight: FontWeight.w500,
@@ -230,7 +234,7 @@ class _DoctorCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      doctor.specialty,
+                      doctor.specialty.tr,
                       style: DS.text(
                         size: 14,
                         weight: FontWeight.w500,
@@ -245,6 +249,60 @@ class _DoctorCard extends StatelessWidget {
                 background: DS.skyTint,
                 foreground: DS.navy,
                 vertical: 6,
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.schedule_rounded, size: 18, color: DS.muted),
+              const SizedBox(width: 7),
+              Expanded(
+                child: Text(
+                  doctor.workTime,
+                  style: DS.text(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: DS.muted,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.location_on_outlined, size: 18, color: DS.muted),
+              const SizedBox(width: 7),
+              Expanded(
+                child: Text(
+                  doctor.address,
+                  style: DS.text(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: DS.muted,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              const Icon(Icons.phone_outlined, size: 18, color: DS.muted),
+              const SizedBox(width: 7),
+              Expanded(
+                child: Text(
+                  doctor.phone,
+                  style: DS.text(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: DS.muted,
+                  ),
+                ),
               ),
             ],
           ),
@@ -265,7 +323,7 @@ class _DoctorCard extends StatelessWidget {
               ),
               Semantics(
                 button: true,
-                label: 'Book ${doctor.name}',
+                label: 'Book {name}'.trf({'name': doctor.name}),
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -281,7 +339,7 @@ class _DoctorCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
-                      'Book',
+                      'Book'.tr,
                       style: DS.text(
                         size: 15,
                         weight: FontWeight.w700,

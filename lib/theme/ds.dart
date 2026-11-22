@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/l10n.dart';
+
 /// Design tokens of the agreed ShifAI design (navy and sky blue from the logo,
 /// soft grey-white background, white rounded cards, Plus Jakarta Sans).
 class DS {
@@ -85,6 +87,7 @@ class DS {
     fontWeight: weight,
     color: color,
     height: height,
-    letterSpacing: letterSpacing,
+    // Tight tracking breaks the joined letters of Arabic script.
+    letterSpacing: L10n.current == AppLanguage.ar ? null : letterSpacing,
   );
 }

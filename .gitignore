@@ -49,3 +49,4 @@ app.*.map.json
 
 # NHANES downloads used to train the risk model
 ml/data/
+supabase.json

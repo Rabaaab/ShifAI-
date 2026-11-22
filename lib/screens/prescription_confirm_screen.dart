@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../l10n/l10n.dart';
 import '../providers/medicine_provider.dart';
 import '../services/prescription_parser.dart';
 import '../theme/ds.dart';
@@ -83,7 +84,13 @@ class _PrescriptionConfirmScreenState extends State<PrescriptionConfirmScreen> {
       }
     }
     messenger.showSnackBar(
-      SnackBar(content: Text('$count reminder${count == 1 ? '' : 's'} added.')),
+      SnackBar(
+        content: Text(
+          (count == 1 ? '1 reminder added.' : '{count} reminders added.').trf({
+            'count': count,
+          }),
+        ),
+      ),
     );
     navigator.pop(true);
   }
@@ -111,10 +118,12 @@ class _PrescriptionConfirmScreenState extends State<PrescriptionConfirmScreen> {
                     Text(
                       _rows.isEmpty
                           ? 'We could not find a medicine and a dose in this '
-                                'photo. Try a clearer, straight photo, or add '
-                                'it by hand.'
+                                    'photo. Try a clearer, straight photo, or add '
+                                    'it by hand.'
+                                .tr
                           : 'Compare with the paper. Fix anything that is '
-                                'wrong, then add.',
+                                    'wrong, then add.'
+                                .tr,
                       style: DS.text(
                         size: 15.5,
                         weight: FontWeight.w500,
@@ -146,7 +155,7 @@ class _PrescriptionConfirmScreenState extends State<PrescriptionConfirmScreen> {
                                       weight: FontWeight.w800,
                                     ),
                                     decoration: dsFieldDecoration(
-                                      hint: 'Medicine name',
+                                      hint: 'Medicine name'.tr,
                                       vertical: 14,
                                     ),
                                   ),
@@ -158,15 +167,15 @@ class _PrescriptionConfirmScreenState extends State<PrescriptionConfirmScreen> {
                               controller: r.dose,
                               style: DS.text(weight: FontWeight.w600),
                               decoration: dsFieldDecoration(
-                                hint: 'Dose',
+                                hint: 'Dose'.tr,
                                 vertical: 14,
                               ),
                             ),
                             const SizedBox(height: 12),
                             Text(
                               r.guessed
-                                  ? 'No schedule found: choose the times'
-                                  : 'Times, read from the paper',
+                                  ? 'No schedule found: choose the times'.tr
+                                  : 'Times, read from the paper'.tr,
                               style: DS.text(
                                 size: 13,
                                 weight: FontWeight.w600,
@@ -225,7 +234,7 @@ class _PrescriptionConfirmScreenState extends State<PrescriptionConfirmScreen> {
                       child: ExpansionTile(
                         tilePadding: EdgeInsets.zero,
                         title: Text(
-                          'Show the text we read',
+                          'Show the text we read'.tr,
                           style: DS.text(
                             size: 14.5,
                             weight: FontWeight.w700,
@@ -242,7 +251,7 @@ class _PrescriptionConfirmScreenState extends State<PrescriptionConfirmScreen> {
                             ),
                             child: SelectableText(
                               widget.rawText.isEmpty
-                                  ? '(nothing)'
+                                  ? '(nothing)'.tr
                                   : widget.rawText,
                               style: DS.text(
                                 size: 13,
@@ -262,13 +271,15 @@ class _PrescriptionConfirmScreenState extends State<PrescriptionConfirmScreen> {
                 padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
                 child: _rows.isEmpty
                     ? DsPrimaryButton(
-                        label: 'Back',
+                        label: 'Back'.tr,
                         onPressed: () => Navigator.of(context).pop(false),
                       )
                     : DsPrimaryButton(
                         label: selectedCount == 0
-                            ? 'Choose a medicine'
-                            : 'Add $selectedCount to my schedule',
+                            ? 'Choose a medicine'.tr
+                            : 'Add {selectedCount} to my schedule'.trf({
+                                'selectedCount': selectedCount,
+                              }),
                         loading: _saving,
                         onPressed: selectedCount == 0 ? null : _addAll,
                       ),

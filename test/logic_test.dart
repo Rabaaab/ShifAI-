@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shifai/models/doctor.dart';
 import 'package:shifai/models/lab_record.dart';
 import 'package:shifai/providers/appointment_provider.dart';
 import 'package:shifai/providers/medicine_provider.dart';
@@ -7,6 +8,22 @@ import 'package:shifai/services/notices.dart';
 import 'package:shifai/services/prescription_parser.dart';
 
 void main() {
+  group('doctor data', () {
+    test('has twelve named doctors with work times, addresses and phones', () {
+      expect(sampleDoctors, hasLength(12));
+      for (final doctor in sampleDoctors) {
+        expect(doctor.name, startsWith('Dr '));
+        expect(doctor.workTime, isNotEmpty);
+        expect(doctor.address, isNotEmpty);
+        expect(doctor.phone, isNotEmpty);
+      }
+      expect(
+        sampleDoctors.map((doctor) => doctor.photo).toSet(),
+        hasLength(12),
+      );
+    });
+  });
+
   group('ADA risk score', () {
     AdaRiskInput person({
       int age = 30,

@@ -2,34 +2,48 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart' show Intl;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shifai/l10n/l10n.dart';
 import 'package:shifai/models/lab_record.dart';
+import 'package:shifai/models/doctor.dart';
 import 'package:shifai/models/user_profile.dart';
 import 'package:shifai/providers/activity_provider.dart';
 import 'package:shifai/providers/appointment_provider.dart';
 import 'package:shifai/providers/auth_provider.dart';
 import 'package:shifai/providers/coaching_provider.dart';
 import 'package:shifai/providers/lab_records_provider.dart';
+import 'package:shifai/providers/language_provider.dart';
 import 'package:shifai/providers/medicine_provider.dart';
 import 'package:shifai/providers/nav_provider.dart';
 import 'package:shifai/providers/profile_provider.dart';
 import 'package:shifai/providers/settings_provider.dart';
 import 'package:shifai/providers/skin_check_provider.dart';
 import 'package:shifai/screens/app_shell.dart';
+import 'package:shifai/screens/book_screen.dart';
+import 'package:shifai/screens/auth_screen.dart';
+import 'package:shifai/screens/emergency_screen.dart';
 import 'package:shifai/screens/find_doctor_screen.dart';
 import 'package:shifai/screens/lab_entry_form_screen.dart';
 import 'package:shifai/screens/lab_scan_screen.dart';
 import 'package:shifai/screens/medicine_screen.dart';
+import 'package:shifai/screens/notifications_screen.dart';
+import 'package:shifai/screens/profile_form_screen.dart';
 import 'package:shifai/screens/result_screen.dart';
 import 'package:shifai/screens/search_screen.dart';
+import 'package:shifai/screens/shortcuts_screen.dart';
 import 'package:shifai/screens/skin_check_screen.dart';
 import 'package:shifai/screens/wellness_screen.dart';
+import 'package:shifai/screens/welcome_screen.dart';
 import 'package:shifai/services/risk_model.dart';
 import 'package:shifai/theme/app_theme.dart';
 import 'package:shifai/widgets/ds_widgets.dart';
+import 'package:shifai/widgets/language_picker.dart';
 
 final testModel = RiskModel.fromJson(
   jsonDecode(File('assets/ml/risk_model.json').readAsStringSync())
@@ -48,6 +62,7 @@ Widget _app(Widget home, {AuthProvider? auth}) => MultiProvider(
     ChangeNotifierProvider(create: (_) => SettingsProvider()),
     ChangeNotifierProvider(create: (_) => ActivityProvider()),
     ChangeNotifierProvider(create: (_) => SkinCheckProvider()),
+    ChangeNotifierProvider(create: (_) => LanguageProvider()),
   ],
   child: MaterialApp(theme: AppTheme.light(), home: home),
 );
@@ -468,4 +483,106 @@ void main() {
     expect(find.textContaining('Vitamin D'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  group('languages', () {
+    setUpAll(initializeDateFormatting);
+    tearDown(() {
+      L10n.current = AppLanguage.en;
+      Intl.defaultLocale = 'en';
+    });
+
+    for (final lang in AppLanguage.values) {
+      testWidgets('main screens lay out in ${lang.name}', (tester) async {
+        final screens = <Widget>[
+          const WelcomeScreen(),
+          const AppShell(),
+          const WellnessScreen(),
+          const WellnessScreen(startOnMove: true),
+          const SkinCheckScreen(),
+          const FindDoctorScreen(),
+          const MedicineScreen(),
+          const EmergencyScreen(),
+          const ShortcutsScreen(),
+          const SearchScreen(),
+          const AuthScreen(),
+          const AuthScreen(start: AuthStart.createAccount),
+          const LabEntryFormScreen(),
+          const NotificationsScreen(),
+          const ProfileFormScreen(),
+          BookScreen(doctor: doctorsIn('Fès').first),
+        ];
+        for (final screen in screens) {
+          phone(tester, h: 2600);
+          await tester.pumpWidget(_appIn(lang, screen));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull, reason: '$screen');
+          await tester.pumpWidget(const SizedBox());
+        }
+      });
+    }
+
+    testWidgets('Eat and move switches to Arabic, right to left', (
+      tester,
+    ) async {
+      phone(tester, h: 2600);
+      await tester.pumpWidget(_appIn(AppLanguage.ar, const WellnessScreen()));
+      await tester.pumpAndSettle();
+      expect(find.text('كوّن صحنك'), findsOneWidget);
+      expect(find.text('العدس، الحمص، الفاصوليا'), findsOneWidget);
+      final dir = Directionality.of(tester.element(find.text('كوّن صحنك')));
+      expect(dir, TextDirection.rtl);
+    });
+
+    testWidgets('the header button changes the language', (tester) async {
+      phone(tester);
+      await tester.pumpWidget(_appIn(AppLanguage.en, const AppShell()));
+      await tester.pumpAndSettle();
+      expect(find.text('Quick actions'), findsOneWidget);
+
+      await tester.tap(find.byType(LanguageButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Français'));
+      await tester.pumpAndSettle();
+      expect(L10n.current, AppLanguage.fr);
+      expect(
+        (await SharedPreferences.getInstance()).getString('shifai_language'),
+        'fr',
+      );
+    });
+
+    test('untranslated text falls back to English', () {
+      L10n.current = AppLanguage.fr;
+      expect('Search'.tr, 'Rechercher');
+      expect('Not a key in the tables'.tr, 'Not a key in the tables');
+      expect('Welcome, {name}'.trf({'name': 'Sara'}), 'Bienvenue, Sara');
+    });
+  });
+}
+
+/// The app in [lang], the way main.dart sets it up.
+Widget _appIn(AppLanguage lang, Widget home) {
+  L10n.current = lang;
+  Intl.defaultLocale = lang.intlLocale;
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+      ChangeNotifierProvider(create: (_) => LabRecordsProvider()),
+      ChangeNotifierProvider(create: (_) => CoachingProvider()),
+      ChangeNotifierProvider(create: (_) => NavProvider()),
+      ChangeNotifierProvider(create: (_) => ProfileProvider(model: testModel)),
+      ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+      ChangeNotifierProvider(create: (_) => MedicineProvider()),
+      ChangeNotifierProvider(create: (_) => SettingsProvider()),
+      ChangeNotifierProvider(create: (_) => ActivityProvider()),
+      ChangeNotifierProvider(create: (_) => SkinCheckProvider()),
+      ChangeNotifierProvider(create: (_) => LanguageProvider()),
+    ],
+    child: MaterialApp(
+      theme: AppTheme.light(),
+      locale: lang.materialLocale,
+      supportedLocales: const [Locale('en'), Locale('fr'), Locale('ar')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      home: home,
+    ),
+  );
 }

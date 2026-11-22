@@ -7,6 +7,8 @@ import 'package:http/http.dart' show ClientException;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
+
 class CoachingProvider extends ChangeNotifier {
   CoachingProvider({this.client, Connectivity? connectivity}) {
     unawaited(_loadForAccount(null));
@@ -153,15 +155,18 @@ class CoachingProvider extends ChangeNotifier {
       await _saveLocal();
     } on PostgrestException catch (error) {
       if (_accountId == userId) {
-        _syncError = 'Coaching sync failed: ${error.message}';
+        _syncError = 'Coaching sync failed: {message}'.trf({
+          'message': error.message,
+        });
       }
     } on ClientException {
       if (_accountId == userId) {
-        _syncError = 'Offline. Coaching updates are saved on this device.';
+        _syncError = 'Offline. Coaching updates are saved on this device.'.tr;
       }
     } on TimeoutException {
       if (_accountId == userId) {
-        _syncError = 'Coaching sync timed out. Updates will retry when online.';
+        _syncError =
+            'Coaching sync timed out. Updates will retry when online.'.tr;
       }
     } finally {
       if (_accountId == userId) notifyListeners();

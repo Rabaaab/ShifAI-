@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../l10n/l10n.dart';
 import '../providers/appointment_provider.dart';
 import '../providers/medicine_provider.dart';
 import '../providers/settings_provider.dart';
@@ -34,21 +35,21 @@ class MedicineScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          'Remove ${m.name}?',
+          'Remove {name}?'.trf({'name': m.name}),
           style: DS.text(weight: FontWeight.w800),
         ),
         content: Text(
-          'It will be removed from your daily schedule.',
+          'It will be removed from your daily schedule.'.tr,
           style: DS.text(size: 15, height: 1.45),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Keep'),
+            child: Text('Keep'.tr),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Remove', style: TextStyle(color: DS.redText)),
+            child: Text('Remove'.tr, style: TextStyle(color: DS.redText)),
           ),
         ],
       ),
@@ -91,7 +92,7 @@ class MedicineScreen extends StatelessWidget {
                           DsDoctorAvatar(asset: doctor.photo, size: 32),
                           const SizedBox(width: 10),
                           Text(
-                            'Added by ${doctor.name}',
+                            'Added by {name}'.trf({'name': doctor.name}),
                             style: DS.text(
                               size: 14,
                               weight: FontWeight.w600,
@@ -118,7 +119,7 @@ class MedicineScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Today',
+                                      'Today'.tr,
                                       style: DS.text(
                                         size: 14,
                                         weight: FontWeight.w600,
@@ -127,7 +128,10 @@ class MedicineScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      '$taken of ${items.length} taken',
+                                      '{taken} of {length} taken'.trf({
+                                        'taken': taken,
+                                        'length': items.length,
+                                      }),
                                       style: DS.text(
                                         size: 28,
                                         weight: FontWeight.w800,
@@ -138,8 +142,8 @@ class MedicineScreen extends StatelessWidget {
                                 ),
                               ),
                               if (items.isNotEmpty && taken == items.length)
-                                const DsPill(
-                                  'All done',
+                                DsPill(
+                                  'All done'.tr,
                                   background: DS.greenTint,
                                   foreground: DS.greenText,
                                 ),
@@ -162,7 +166,8 @@ class MedicineScreen extends StatelessWidget {
                     if (items.isEmpty)
                       DsCard(
                         child: Text(
-                          'No medicine yet. Add the ones your doctor gave you.',
+                          'No medicine yet. Add the ones your doctor gave you.'
+                              .tr,
                           style: DS.text(color: DS.muted, height: 1.45),
                         ),
                       ),
@@ -195,7 +200,7 @@ class MedicineScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Reminders',
+                                  'Reminders'.tr,
                                   style: DS.text(
                                     size: 16,
                                     weight: FontWeight.w700,
@@ -203,8 +208,8 @@ class MedicineScreen extends StatelessWidget {
                                 ),
                                 Text(
                                   settings.medicineReminders
-                                      ? 'Shown in your notifications'
-                                      : 'Off',
+                                      ? 'Shown in your notifications'.tr
+                                      : 'Off'.tr,
                                   style: DS.text(
                                     size: 13,
                                     weight: FontWeight.w500,
@@ -230,7 +235,7 @@ class MedicineScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: DsPrimaryButton(
-                        label: 'Add medicine',
+                        label: 'Add medicine'.tr,
                         icon: Icons.add_rounded,
                         height: 58,
                         onPressed: () => _add(context),
@@ -239,7 +244,7 @@ class MedicineScreen extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: DsOutlineButton(
-                        label: 'Scan prescription',
+                        label: 'Scan prescription'.tr,
                         fontSize: 14.5,
                         icon: Icons.document_scanner_outlined,
                         onPressed: () => Navigator.of(context).push(
@@ -278,7 +283,7 @@ class _MedicineRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final status = takenToday ? 'Taken' : (isNext ? 'Next' : 'Later');
+    final status = takenToday ? 'Taken'.tr : (isNext ? 'Next'.tr : 'Later'.tr);
     final statusColor = takenToday
         ? DS.greenText
         : (isNext ? DS.navy : DS.iconMuted);
@@ -298,7 +303,7 @@ class _MedicineRow extends StatelessWidget {
 
     final note = [
       medicine.dose,
-      medicine.note,
+      medicine.note.tr,
     ].where((s) => s.isNotEmpty).join(', ');
 
     return GestureDetector(
@@ -322,7 +327,7 @@ class _MedicineRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        medicine.name,
+                        medicine.name.tr,
                         style: DS.text(size: 16, weight: FontWeight.w800),
                       ),
                       const SizedBox(height: 2),
@@ -363,7 +368,7 @@ class _MedicineRow extends StatelessWidget {
             if (isNext) ...[
               const SizedBox(height: 14),
               DsPrimaryButton(
-                label: 'Mark as taken',
+                label: 'Mark as taken'.tr,
                 height: 50,
                 onPressed: onMark,
               ),
@@ -407,7 +412,7 @@ class _AddMedicineSheetState extends State<_AddMedicineSheet> {
 
   void _save() {
     if (_name.text.trim().isEmpty) {
-      setState(() => _error = 'Enter the medicine name.');
+      setState(() => _error = 'Enter the medicine name.'.tr);
       return;
     }
     Navigator.pop(
@@ -437,7 +442,7 @@ class _AddMedicineSheetState extends State<_AddMedicineSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Add medicine',
+              'Add medicine'.tr,
               style: DS.text(size: 24, weight: FontWeight.w800),
             ),
             const SizedBox(height: 18),
@@ -445,20 +450,22 @@ class _AddMedicineSheetState extends State<_AddMedicineSheet> {
               controller: _name,
               textCapitalization: TextCapitalization.sentences,
               style: DS.text(weight: FontWeight.w600),
-              decoration: dsFieldDecoration(hint: 'Medicine name'),
+              decoration: dsFieldDecoration(hint: 'Medicine name'.tr),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _dose,
               style: DS.text(weight: FontWeight.w600),
-              decoration: dsFieldDecoration(hint: 'Dose, for example 500 mg'),
+              decoration: dsFieldDecoration(
+                hint: 'Dose, for example 500 mg'.tr,
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _note,
               style: DS.text(weight: FontWeight.w600),
               decoration: dsFieldDecoration(
-                hint: 'Note, for example with lunch',
+                hint: 'Note, for example with lunch'.tr,
               ),
             ),
             const SizedBox(height: 12),
@@ -476,7 +483,7 @@ class _AddMedicineSheetState extends State<_AddMedicineSheet> {
                     const Icon(Icons.schedule_rounded, color: DS.navy),
                     const SizedBox(width: 12),
                     Text(
-                      'Time  $_timeText',
+                      'Time  {_timeText}'.trf({'_timeText': _timeText}),
                       style: DS.text(size: 17, weight: FontWeight.w600),
                     ),
                   ],
@@ -488,7 +495,7 @@ class _AddMedicineSheetState extends State<_AddMedicineSheet> {
               Text(_error!, style: DS.text(size: 13.5, color: DS.redText)),
             ],
             const SizedBox(height: 20),
-            DsPrimaryButton(label: 'Save', onPressed: _save),
+            DsPrimaryButton(label: 'Save'.tr, onPressed: _save),
           ],
         ),
       ),
