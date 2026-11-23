@@ -1,0 +1,13 @@
+LIMITS. This model is a screening hint, not a diagnosis, and must never be presented as one.
+
+Data. Fitzpatrick17k lists 92 acanthosis nigricans (AN) images, but 70 of their links are dead (HTTP 404); only 22 AN images could be downloaded, all from a single source (Atlas Dermatologico, CC BY-NC-SA 3.0, non-commercial use only). The final dataset has 44 images (22 AN, 22 other skin conditions), split 70/15/15: train 15/15, validation 4/3, test 3/4 (AN/other).
+
+Results. The test set has only 7 images (3 AN). Test AUC 0.750 (95% bootstrap CI 0.250-1.000), sensitivity 0.666 (2/3), specificity 0.750 (3/4), at a threshold of 0.621 fixed on the validation set. With so few test images these numbers are not reliable: one image more or less right changes sensitivity by 33 points.
+
+Skin tone. The test set contains AN images only for Fitzpatrick III-IV (3 images; sensitivity 2/3). There are no AN test images for Fitzpatrick I-II, and no test images at all for Fitzpatrick V-VI. Performance on darker skin, which matters most for a Moroccan audience, is therefore unknown.
+
+What the model looks at. Every image carries the same "SFS" watermark in the bottom-left corner. Grad-CAM shows the model partly attending to this watermark on some images, which is another sign that it has not yet learned a robust visual pattern.
+
+Other gaps. The negative class contains other skin diseases only, no photos of normal skin, and all images are clinical atlas photos, not smartphone photos of the neck, so real-world accuracy in the app would likely be lower.
+
+Next steps. A larger, consented, tone-balanced dataset of phone photos (especially Fitzpatrick IV-VI), removal or masking of watermarks, and clinical validation are needed before any real use.

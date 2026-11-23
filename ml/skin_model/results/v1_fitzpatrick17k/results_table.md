@@ -1,0 +1,9 @@
+# Acanthosis nigricans model — test results
+
+Screening hint only, not a diagnosis. Backbone: mobilenetv3. Threshold 0.622 chosen on validation.
+
+| group              |   n |   n_AN |   n_other | AUC   | AUC_95CI    | Sensitivity   | Specificity   |   TP |   FN |   TN |   FP |
+|:-------------------|----:|-------:|----------:|:------|:------------|:--------------|:--------------|-----:|-----:|-----:|-----:|
+| ALL (test)         |   7 |      3 |         4 | 0.750 | 0.250-1.000 | 0.666 (2/3)   | 0.750 (3/4)   |    2 |    1 |    3 |    1 |
+| Fitzpatrick I-II   |   1 |      0 |         1 | n/a   | n/a         | n/a (0/0)     | 1.000 (1/1)   |    0 |    0 |    1 |    0 |
+| Fitzpatrick III-IV |   6 |      3 |         3 | 0.666 | 0.000-1.000 | 0.666 (2/3)   | 0.666 (2/3)   |    2 |    1 |    2 |    1 |

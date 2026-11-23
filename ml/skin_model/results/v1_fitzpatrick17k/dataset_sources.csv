@@ -1,0 +1,2 @@
+dataset,url,licence,used_for,citation
+Fitzpatrick17k,https://github.com/mattgroh/fitzpatrick17k,"CC BY-NC-SA 3.0 (attribution, non-commercial, share-alike). Images originally from DermaAmin and Atlas Dermatologico.",acanthosis nigricans (positive class) + other skin conditions (negative class),"Groh et al., 'Evaluating Deep Neural Networks Trained on Clinical Images in Dermatology with the Fitzpatrick 17k Dataset', CVPR Workshops 2021"

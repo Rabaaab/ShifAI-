@@ -1,0 +1,10 @@
+{
+  "file": "model.tflite",
+  "size_MB": 1.94,
+  "backbone": "mobilenetv3",
+  "input": "float32 [1,224,224,3], RGB, raw pixel values 0-255 (NO normalisation, it is inside the model)",
+  "output": "float32 [1,1] = probability of acanthosis-nigricans-like appearance (sigmoid)",
+  "threshold": 0.25149619579315186,
+  "threshold_chosen_on": "validation set",
+  "wording_in_app": "Screening hint only, not a diagnosis. If positive: 'Signs that may be worth showing to a doctor.'"
+}
