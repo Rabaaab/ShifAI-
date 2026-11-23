@@ -4,18 +4,66 @@ ShifAI helps users track insulin-resistance and prediabetes risk indicators. It 
 
 The name comes from the Arabic شفاء (*shifa*, “healing”), with **AI** inside the name.
 
+## Screenshots
+
+Screens use sample data, not a real patient.
+
+<p align="center">
+  <img src="docs/screenshots/iphone-16-pro-mockups.png" alt="ShifAI on iPhone 16 Pro: Home, Trends and Eat and move" width="100%">
+</p>
+
+<p align="center"><sub>iPhone 16 Pro: Home, Trends with HOMA-IR over time, and Eat and move.</sub></p>
+
+<p align="center">
+  <img src="docs/screenshots/android-mockups.png" alt="ShifAI on Android: Home in Arabic, Skin and body check, and Meals and energy" width="100%">
+</p>
+
+<p align="center"><sub>Android: Home in Arabic (the layout flips right to left), Skin and body check, and Meals and energy.</sub></p>
+
+The plain screenshots are in [`docs/screenshots/`](docs/screenshots/).
+
 ## What the app includes
 
-- Branded dashboard, latest saved HOMA-IR, history charts, trends, and daily coaching.
-- Manual lab-result entry and glucose/insulin unit conversion.
-- Android/iOS lab-report photo capture and gallery selection, with on-device Google ML Kit text recognition. Extracted values can be reviewed and edited before saving.
+**Screen, without a blood test**
+- Risk estimate: enter age, sex, height, weight and waist, and an on-device model (a logistic regression plus a small neural network, trained on US NHANES data) estimates the chance that HOMA-IR is 2.5 or higher. See [Risk model](#risk-model).
+- Skin and body check: skin signs, a private photo timeline, and the ADA risk questionnaire.
+
+**Measure**
+- Lab-report photo capture and gallery selection on Android/iOS, with on-device Google ML Kit text recognition. Extracted values can be reviewed and edited before saving. Manual entry and unit conversion (g/L, mg/dL, mmol/L, µIU/mL, pmol/L) on every platform.
+- HOMA-IR with its band, history charts and trends.
+
+**Act**
+- Eat and move: a plate guide with Moroccan foods and exercises, and a 150-minute weekly activity goal.
+- Meals and energy: log a meal, then your energy later. The app finds your own pattern, on the phone.
+- Daily coaching tips.
+
+**Follow up**
+- Find a doctor by city (a labelled sample list for now), book an appointment, a daily medicine schedule with a prescription scan, an emergency screen (call 112, warning signs, medical ID), notifications, search, and a WhatsApp summary.
+
+**Everywhere**
+- Three languages: English, French and Arabic (right to left, with its own font), and a text size setting.
 - Supabase email registration, sign-in, email verification, password reset, and persisted authenticated sessions.
 - User-scoped cloud lab records and coaching completion state, protected by Supabase Row-Level Security (RLS).
 - AES-GCM encrypted local lab-record cache for offline access. Pending changes are synced when possible, and newer record timestamps win during reconciliation.
 - Explicit, repeat-safe import of existing local-only records into a signed-in account. Records are not silently assigned to an account.
-- DevicePreview in debug builds, with selectable simulated Android devices and dimensions.
+- DevicePreview in debug builds, with selectable simulated devices and dimensions.
 - Original ShifAI branding and logo at `assets/images/shifai_logo.png`.
-- Risk estimate without a blood test: enter age, sex, height, weight and waist, and an on-device logistic-regression model (trained on US NHANES data) estimates the chance that HOMA-IR is 2.5 or higher. See [Risk model](#risk-model).
+
+## Project structure
+
+Each layer of `lib/` uses the one below it: screens read providers, providers call services, services work on models.
+
+| Folder | What it holds |
+| --- | --- |
+| `lib/screens/` | One file per screen. They show things and hold no logic. |
+| `lib/widgets/`, `lib/theme/` | Shared building blocks, colors and text style. |
+| `lib/providers/` | App state (Provider): accounts, lab records, profile, medicine, activity, check-ins, settings. |
+| `lib/services/` | The real work: the AI model, the lab and prescription readers, storage, cloud sync, the pattern finder, notifications. |
+| `lib/models/` | The data: a lab record (with the HOMA-IR formula), a profile, a meal log, cities, foods. |
+| `lib/l10n/` | The French and Arabic translations. |
+| `assets/ml/`, `ml/` | The trained model weights, and the Python that trains and validates them. |
+| `supabase/migrations/` | The database tables and security rules. |
+| `test/` | Automated tests. |
 
 ## First-time setup: run in Chrome
 
@@ -129,6 +177,10 @@ python ml/train_models.py
 `ml/compare_models.py` is an earlier exploration that also compares gradient boosting.
 
 Honest limits: the data is from a US population and may be less accurate elsewhere, the label (HOMA-IR >= 2.5) is a proxy and not a diagnosis, glucose is part of the HOMA-IR formula (so the `lab` set partly rebuilds it, and the model is still useful because it needs no insulin value), and there is no external validation yet.
+
+### Skin photo model (experiment, not in the app)
+
+`ml/skin_model/` holds a first experiment on a photo model for acanthosis nigricans, a skin sign that can go with insulin resistance (MobileNetV3 Small, pretrained, trained on Fitzpatrick17k and then on Fitzpatrick17k plus Google SCIN). It has only 22 to 24 positive images and 7 to 8 test images, so its test results are not reliable, there are no test images on darker skin, and it is **not used in the app**. Notebooks, results, limits and dataset licences: [`ml/skin_model/README.md`](ml/skin_model/README.md).
 
 ### Database
 
